@@ -17,7 +17,6 @@ const skillCategories: SkillCategory[] = [
       { name: 'Node.js', level: 90 },
       { name: 'Express.js', level: 90 },
       { name: 'NestJS', level: 80 },
-      { name: 'Fastify', level: 72 },
       { name: 'Socket.io', level: 78 },
     ],
   },
@@ -27,8 +26,8 @@ const skillCategories: SkillCategory[] = [
     skills: [
       { name: 'RESTful APIs', level: 92 },
       { name: 'GraphQL', level: 70 },
-      { name: 'Microservices', level: 72 },
-      { name: 'Event-Driven Arch.', level: 68 },
+      { name: 'Mongoose', level: 78 },
+      { name: 'Sequelize', level: 76 },
       { name: 'JWT & OAuth2', level: 88 },
     ],
   },
@@ -40,7 +39,6 @@ const skillCategories: SkillCategory[] = [
       { name: 'MySQL', level: 82 },
       { name: 'PostgreSQL', level: 78 },
       { name: 'Redis', level: 70 },
-      { name: 'Elasticsearch', level: 65 },
     ],
   },
   {
@@ -174,7 +172,7 @@ export default function SkillsSection() {
   }, [showCertModal]);
 
   return (
-    <div ref={sectionRef} id="skills" className="py-24 px-4 relative bg-secondary/30">
+    <div ref={sectionRef} id="skills" className="py-8 sm:py-24 px-4 relative bg-secondary/30">
       {/* Depth */}
       <div className="absolute inset-0 z-0" aria-hidden="true">
         <div className="blob-accent absolute bottom-0 left-1/4 w-[400px] h-[400px] opacity-40" />
@@ -188,7 +186,7 @@ export default function SkillsSection() {
 
       <div className="max-w-6xl mx-auto relative z-10">
         {/* Header */}
-        <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6 text-center md:text-left">
           <div>
             <span className="font-mono text-[10px] text-primary uppercase tracking-[0.4em] font-bold block mb-3">
               03 // Skills
@@ -198,7 +196,7 @@ export default function SkillsSection() {
               <span className="gradient-text">Stack.</span>
             </h2>
           </div>
-          <p className="text-muted-foreground max-w-xs text-sm leading-relaxed md:text-right">
+          <p className="text-muted-foreground max-w-xs text-sm leading-relaxed mx-auto md:mx-0 md:text-right">
             Full-stack depth from backend APIs to frontend interfaces and UI/UX design.
           </p>
         </div>
@@ -234,10 +232,10 @@ export default function SkillsSection() {
 
         {/* Additional tools row */}
         <div className="mt-10 glass-card rounded-2xl p-6">
-          <p className="font-mono text-[10px] text-muted-foreground uppercase tracking-widest mb-4 font-bold">
+          <p className="font-mono text-[10px] text-muted-foreground uppercase tracking-widest mb-4 font-bold text-center md:text-left">
             Also worked with
           </p>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 justify-center md:justify-start">
             {[
               'Git', 'GitHub', 'Zod', 'JWT', 'Passport.js',
               'Mongoose', 'Sequelize', 'Adobe XD', 'SQL Server', 'Xampp',
@@ -292,10 +290,10 @@ export default function SkillsSection() {
         </div>
       </div>
       {showCertModal && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-6">
-          <div className="absolute inset-0 bg-black/95 backdrop-blur-sm" onClick={() => setShowCertModal(false)} />
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-6">
+          <div className="absolute inset-0 bg-black/90 backdrop-blur-md" onClick={() => setShowCertModal(false)} />
           <div className="relative z-[10000] w-full flex items-center justify-center">
-            <div className="w-full max-w-5xl bg-card rounded-2xl p-6 shadow-2xl border border-primary/10" style={{ borderWidth: '1px' }}>
+            <div className="w-full max-w-[95vw] sm:max-w-5xl bg-card rounded-2xl p-4 sm:p-6 shadow-2xl border border-primary/10" style={{ borderWidth: '1px' }}>
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <h3 className="text-lg font-bold text-foreground">{activeCertTitle}</h3>
@@ -311,11 +309,11 @@ export default function SkillsSection() {
 
               {certFiles && certFiles.length > 0 && activeIndex !== null ? (
                 <div className="w-full flex items-center justify-center">
-                  <div className="w-full bg-[#0b1116] rounded-lg overflow-hidden flex items-center justify-center p-6">
+                  <div className="w-full bg-[#0b1116] rounded-lg overflow-auto flex items-center justify-center p-3 sm:p-6 max-h-[70vh]">
                     <img
                       src={certFiles[activeIndex].url}
                       alt={certFiles[activeIndex].name}
-                      className="object-contain max-h-[72vh] max-w-full"
+                      className="object-contain max-h-[68vh] max-w-full"
                     />
                   </div>
                 </div>

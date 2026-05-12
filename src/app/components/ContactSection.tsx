@@ -144,7 +144,7 @@ export default function ContactSection() {
   };
 
   return (
-    <div id="contact" className="py-24 px-4 relative">
+    <div id="contact" className="py-8 sm:py-24 px-4 relative">
       <div className="absolute inset-0 z-0" aria-hidden="true">
         <div className="blob-accent absolute bottom-0 left-0 w-[500px] h-[500px] opacity-40" />
         <div className="blob-secondary absolute top-0 right-0 w-[300px] h-[300px] opacity-60" />
@@ -334,7 +334,7 @@ export default function ContactSection() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="magnetic-btn w-full flex items-center justify-center gap-2.5 px-8 py-4 bg-primary text-primary-foreground rounded-full font-bold text-sm tracking-wide hover:shadow-glow-md transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="magnetic-btn w-full flex items-center justify-center gap-24 px-8 py-4 bg-primary text-primary-foreground rounded-full font-bold text-sm tracking-wide hover:shadow-glow-md transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
                   >
                     {loading ? (
                       <>

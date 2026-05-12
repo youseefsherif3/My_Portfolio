@@ -60,16 +60,16 @@ export default function Header() {
           scrolled ? 'py-3' : 'py-5'
         }`}
       >
-        <div className="max-w-5xl mx-auto px-4">
+        <div className="max-w-5xl mx-auto px-3 sm:px-4">
           <div
-            className={`nav-pill rounded-full px-5 py-2.5 flex items-center justify-between transition-all duration-500 ${
+            className={`nav-pill rounded-full w-full px-3 sm:px-5 py-2.5 flex items-center justify-between gap-3 overflow-hidden transition-all duration-500 ${
               scrolled ? 'shadow-glow-sm' : ''
             }`}
           >
             {/* Logo */}
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="flex items-center gap-2.5 group"
+              className="flex items-center gap-2.5 group shrink-0"
               aria-label="Scroll to top"
             >
               <AppLogo size={28} />
@@ -95,7 +95,7 @@ export default function Header() {
             </div>
 
             {/* Right Side */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full border border-border bg-muted/30">
                 <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                 <span className="text-[9px] font-mono font-bold text-primary tracking-widest uppercase">
@@ -112,7 +112,7 @@ export default function Header() {
 
               {/* Mobile Menu Toggle */}
               <button
-                className="md:hidden p-2 text-muted-foreground hover:text-foreground transition-colors"
+                className="md:hidden w-9 h-9 flex items-center justify-center rounded-full border border-border text-muted-foreground hover:text-foreground transition-colors"
                 onClick={() => setMenuOpen(!menuOpen)}
                 aria-label="Toggle menu"
               >

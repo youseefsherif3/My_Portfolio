@@ -116,7 +116,7 @@ export default function ProjectsSection() {
   }, [visibleProjects]);
 
   return (
-    <div ref={sectionRef} id="projects" className="py-16 sm:py-24 px-4 sm:px-6 relative">
+    <div ref={sectionRef} id="projects" className="py-8 sm:py-24 px-4 sm:px-6 relative">
       {/* Background depth */}
       <div className="absolute inset-0 z-0" aria-hidden="true">
         <div className="blob-secondary absolute top-0 right-0 w-[300px] h-[300px] sm:w-[500px] sm:h-[500px] opacity-50" />
@@ -124,7 +124,7 @@ export default function ProjectsSection() {
 
       <div className="max-w-6xl mx-auto relative z-10">
         {/* Section header */}
-        <div className="mb-8 sm:mb-12 flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6">
+        <div className="mb-8 sm:mb-12 flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6 text-center md:text-left">
           <div>
             <span className="font-mono text-[10px] text-primary uppercase tracking-[0.4em] font-bold block mb-3">
               02 // Work
@@ -134,7 +134,7 @@ export default function ProjectsSection() {
               <span className="gradient-text">Built.</span>
             </h2>
           </div>
-          <p className="text-muted-foreground max-w-sm text-sm leading-relaxed md:text-right">
+          <p className="text-muted-foreground max-w-sm text-sm leading-relaxed mx-auto md:mx-0 md:text-right">
             Real projects solving real problems — from anonymous messaging APIs to full UI/UX design systems.
           </p>
         </div>

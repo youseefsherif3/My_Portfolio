@@ -86,7 +86,7 @@ export default function HeroSection() {
     <section
       id="about"
       ref={heroRef}
-      className="relative min-h-screen flex items-center pt-20 sm:pt-24 pb-12 sm:pb-16 px-4 sm:px-6 overflow-hidden"
+      className="relative min-h-screen flex items-center pt-24 sm:pt-28 pb-12 sm:pb-16 px-4 sm:px-6 overflow-hidden"
     >
       {/* Atmospheric depth layers */}
       <div className="absolute inset-0 z-0" aria-hidden="true">
@@ -121,22 +121,22 @@ export default function HeroSection() {
             </h1>
 
             <p className="text-sm sm:text-base lg:text-lg text-muted-foreground leading-relaxed max-w-xl font-light">
-              I architect and build high-performance, scalable backend systems with Node.js,
+              I&apos;m Youseef Sherif — I architect and build high-performance, scalable backend systems with Node.js,
               specializing in RESTful APIs and real-time applications.
             </p>
 
             {/* CTAs */}
-            <div className="flex flex-wrap items-center gap-3 sm:gap-4 mt-1 sm:mt-2">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mt-1 sm:mt-2">
               <button
                 onClick={scrollToProjects}
-                className="magnetic-btn flex items-center gap-2 sm:gap-2.5 px-6 sm:px-8 py-3 sm:py-4 bg-primary text-primary-foreground rounded-full font-bold text-xs sm:text-sm tracking-wide hover:shadow-glow-md transition-all duration-300"
+                className="magnetic-btn w-full sm:w-auto flex items-center justify-center gap-2 sm:gap-2.5 px-6 sm:px-8 py-3 sm:py-4 bg-primary text-primary-foreground rounded-full font-bold text-xs sm:text-sm tracking-wide hover:shadow-glow-md transition-all duration-300"
               >
                 View My Work
                 <Icon name="ArrowDownIcon" size={14} />
               </button>
               <button
                 onClick={scrollToContact}
-                className="magnetic-btn flex items-center gap-2 sm:gap-2.5 px-6 sm:px-8 py-3 sm:py-4 border border-border text-foreground rounded-full font-bold text-xs sm:text-sm tracking-wide hover:border-primary/40 hover:text-primary transition-all duration-300"
+                className="magnetic-btn w-full sm:w-auto flex items-center justify-center gap-2 sm:gap-2.5 px-6 sm:px-8 py-3 sm:py-4 border border-border text-foreground rounded-full font-bold text-xs sm:text-sm tracking-wide hover:border-primary/40 hover:text-primary transition-all duration-300"
               >
                 Contact Me
               </button>
@@ -212,7 +212,7 @@ export default function HeroSection() {
         </div>
 
         {/* Scroll indicator */}
-        <div className="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-40">
+        <div className="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-100 sm:opacity-40">
           <span className="font-mono text-[9px] text-muted-foreground uppercase tracking-widest">Scroll</span>
           <div className="w-px h-8 sm:h-10 bg-gradient-to-b from-primary to-transparent" />
         </div>
