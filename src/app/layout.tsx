@@ -24,7 +24,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
-  title: 'DevPortfolio — Backend Engineer, Node.js',
+  title: 'Youseef Sherif — Backend Engineer, Node.js',
   description: 'Backend developer specializing in Node.js, APIs, and distributed systems. Explore projects, skills, and technical writing built for scale.',
   icons: {
     icon: [
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     ],
   },
   openGraph: {
-    title: 'DevPortfolio — Backend Engineer',
+    title: 'Youseef Sherif — Backend Engineer',
     description: 'Node.js backend developer. Real projects, real code, real depth.',
     images: [{ url: '/assets/images/app_logo.png', width: 1200, height: 630 }],
   },

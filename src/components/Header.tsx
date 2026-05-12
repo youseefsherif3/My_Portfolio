@@ -74,7 +74,7 @@ export default function Header() {
             >
               <AppLogo size={28} />
               <span className="font-mono text-sm font-bold text-foreground tracking-tight hidden sm:block">
-                Youssef<span className="text-primary">.</span>Sherif
+                Youseef<span className="text-primary">.</span>Sherif
               </span>
             </button>
 

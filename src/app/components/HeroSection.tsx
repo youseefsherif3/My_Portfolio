@@ -5,7 +5,7 @@ import Icon from '@/components/ui/AppIcon';
 
 const codeLines = [
   { indent: 0, code: 'const developer = {', color: 'text-foreground' },
-  { indent: 1, code: 'name: "Youssef Sherif",', color: 'text-primary' },
+  { indent: 1, code: 'name: "Youseef Sherif",', color: 'text-primary' },
   { indent: 1, code: 'role: "Backend Developer",', color: 'text-primary' },
   { indent: 1, code: 'stack: ["Node.js", "Express.js", "NestJS", "MongoDB"],', color: 'text-primary' },
   { indent: 1, code: 'also: ["TypeScript", "React.js", "PostgreSQL"],', color: 'text-primary' },

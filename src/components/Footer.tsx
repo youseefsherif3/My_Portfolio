@@ -16,13 +16,13 @@ export default function Footer() {
         <div className="flex items-center gap-2">
           <AppLogo size={22} />
           <span className="font-mono text-xs font-semibold text-muted-foreground tracking-tight">
-            Youssef<span className="text-primary">.</span>Sherif
+            Youseef<span className="text-primary">.</span>Sherif
           </span>
         </div>
 
         {/* Copyright */}
         <div className="flex items-center gap-6 text-xs font-medium text-muted-foreground">
-          <span className="text-muted-foreground/60">© 2025 Youssef Sherif. All rights reserved.</span>
+          <span className="text-muted-foreground/60">© 2025 Youseef Sherif. All rights reserved.</span>
         </div>
 
         {/* Social Icons */}
