@@ -1,91 +1,163 @@
-# Next.js
+# 🚀 Personal Portfolio Website
 
-A modern Next.js 15 application built with TypeScript and Tailwind CSS.
+A modern developer portfolio built to showcase my projects, technical skills, and professional experience.
 
-## 🚀 Features
+Designed with a futuristic cyber-inspired interface and optimized for performance, responsiveness, and user experience.
 
-- **Next.js 15** - Latest version with improved performance and features
-- **React 19** - Latest React version with enhanced capabilities
-- **Tailwind CSS** - Utility-first CSS framework for rapid UI development
+🔗 Live Demo: https://youseef-sherif-portfolio.vercel.app
 
-## 🛠️ Installation
+---
 
-1. Install dependencies:
-  ```bash
-  npm install
-  # or
-  yarn install
-  ```
+## ✨ Features
 
-2. Start the development server:
-  ```bash
-  npm run dev
-  # or
-  yarn dev
-  ```
-3. Open [http://localhost:4028](http://localhost:4028) with your browser to see the result.
+### Professional Developer Showcase
 
-## 📁 Project Structure
+* Personal Introduction
+* Technical Skills Overview
+* Featured Projects Section
+* Certifications Section
+* Contact Information
 
+### Modern UI/UX
+
+* Cyber-inspired Design
+* Dark Theme Interface
+* Smooth Animations
+* Responsive Layout
+* Interactive Components
+
+### Project Showcase
+
+* Detailed Project Cards
+* Technology Filters
+* Live Demo Links
+* GitHub Repository Links
+
+### Performance
+
+* Optimized Assets
+* Responsive Design
+* Fast Loading Experience
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+
+* React.js
+* TypeScript
+* HTML5
+* CSS3
+* Tailwind CSS
+
+### Design
+
+* Figma
+* UI/UX Design Principles
+
+### Deployment
+
+* Vercel
+
+---
+
+## 📸 Preview
+
+### Home Section
+
+```text
+Backend-Focused Full Stack Developer
+Node.js • Express.js • NestJS • TypeScript
 ```
-nextjs/
-├── public/             # Static assets
-├── src/
-│   ├── app/            # App router components
-│   │   ├── layout.tsx  # Root layout component
-│   │   └── page.tsx    # Main page component
-│   ├── components/     # Reusable UI components
-│   ├── styles/         # Global styles and Tailwind configuration
-├── next.config.mjs     # Next.js configuration
-├── package.json        # Project dependencies and scripts
-├── postcss.config.js   # PostCSS configuration
-└── tailwind.config.js  # Tailwind CSS configuration
 
+### Projects Section
+
+* Saraha App Backend API
+* Social Media Backend API
+* Birthday Interactive Project
+* UI/UX Graduation Project
+
+### Skills Section
+
+* Backend Development
+* APIs & Architecture
+* Databases
+* Frontend Development
+* UI/UX Design
+
+---
+
+## 🎯 Purpose
+
+This portfolio was built to:
+
+* Showcase my technical projects
+* Highlight my backend development expertise
+* Present my skills and certifications
+* Create a professional online presence
+
+---
+
+## 📂 Project Structure
+
+```bash
+src/
+├── components/
+├── sections/
+├── pages/
+├── assets/
+├── hooks/
+├── styles/
+└── utils/
 ```
 
-## 🧩 Page Editing
+---
 
-You can start editing the page by modifying `src/app/page.tsx`. The page auto-updates as you edit the file.
+## ⚙️ Installation
 
-## 🎨 Styling
+Clone the repository:
 
-This project uses Tailwind CSS for styling with the following features:
-- Utility-first approach for rapid development
-- Custom theme configuration
-- Responsive design utilities
-- PostCSS and Autoprefixer integration
+```bash
+git clone https://github.com/youseefsherif3/My_Portfolio.git
+```
 
-## 📦 Available Scripts
+Install dependencies:
 
-- `npm run dev` - Start development server on port 4028
-- `npm run build` - Build the application for production
-- `npm run start` - Start the development server
-- `npm run serve` - Start the production server
-- `npm run lint` - Run ESLint to check code quality
-- `npm run lint:fix` - Fix ESLint issues automatically
-- `npm run format` - Format code with Prettier
+```bash
+npm install
+```
 
-## 📱 Deployment
+Run development server:
 
-Build the application for production:
+```bash
+npm run dev
+```
 
-  ```bash
-  npm run build
-  ```
+Build production version:
 
-## 📚 Learn More
+```bash
+npm run build
+```
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial
+## 🌍 Live Website
 
-You can check out the [Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+https://youseef-sherif-portfolio.vercel.app
 
-## 🙏 Acknowledgments
+---
 
-- Built with [Rocket.new](https://rocket.new)
-- Powered by Next.js and React
-- Styled with Tailwind CSS
+## 👨‍💻 Author
 
-Built with ❤️ on Rocket.new
+### Yousef Sherif
+
+Backend-Focused Full Stack Developer
+
+* GitHub: https://github.com/youseefsherif3
+* Portfolio: https://youseef-sherif-portfolio.vercel.app
+* LinkedIn: https://www.linkedin.com/in/youseef-sherif/
+
+---
+
+⭐ If you like this project, feel free to give it a star.
