@@ -1,7 +1,10 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Icon from '@/components/ui/AppIcon';
+import AppImage from '@/components/ui/AppImage';
+import { defaultSkills } from '@/lib/defaultSkills';
+import { defaultCertifications } from '@/lib/defaultCertifications';
 
 interface SkillCategory {
   label: string;
@@ -9,88 +12,48 @@ interface SkillCategory {
   skills: Array<{ name: string; level: number }>;
 }
 
-const skillCategories: SkillCategory[] = [
-  {
-    label: 'Backend Development',
-    icon: 'ServerStackIcon',
-    skills: [
-      { name: 'Node.js', level: 90 },
-      { name: 'Express.js', level: 90 },
-      { name: 'NestJS', level: 80 },
-      { name: 'Socket.io', level: 78 },
-    ],
-  },
-  {
-    label: 'APIs & Architecture',
-    icon: 'CubeTransparentIcon',
-    skills: [
-      { name: 'RESTful APIs', level: 92 },
-      { name: 'GraphQL', level: 70 },
-      { name: 'Mongoose', level: 78 },
-      { name: 'Sequelize', level: 76 },
-      { name: 'JWT & OAuth2', level: 88 },
-    ],
-  },
-  {
-    label: 'Databases',
-    icon: 'CircleStackIcon',
-    skills: [
-      { name: 'MongoDB', level: 88 },
-      { name: 'MySQL', level: 82 },
-      { name: 'PostgreSQL', level: 78 },
-      { name: 'Redis', level: 70 },
-    ],
-  },
-  {
-    label: 'Languages',
-    icon: 'CpuChipIcon',
-    skills: [
-      { name: 'JavaScript', level: 90 },
-      { name: 'TypeScript', level: 85 },
-      { name: 'Python', level: 72 },
-      { name: 'C++', level: 68 },
-    ],
-  },
-  {
-    label: 'Frontend Development',
-    icon: 'ComputerDesktopIcon',
-    skills: [
-      { name: 'React.js', level: 78 },
-      { name: 'HTML5 & CSS3', level: 85 },
-      { name: 'Tailwind CSS', level: 82 },
-      { name: 'Bootstrap', level: 80 },
-      { name: 'Responsive Design', level: 82 },
-    ],
-  },
-  {
-    label: 'UI/UX Design',
-    icon: 'PaintBrushIcon',
-    skills: [
-      { name: 'Figma', level: 80 },
-      { name: 'User Research', level: 72 },
-      { name: 'Prototyping', level: 78 },
-      { name: 'Wireframing', level: 80 },
-      { name: 'Design Systems', level: 75 },
-    ],
-  },
-];
+interface SkillRecord {
+  id: string;
+  name: string;
+  level: number;
+  category: string;
+  icon: string;
+  order: number;
+}
 
-const certifications = [
-  {
-    title: 'Front-End Development',
-    issuer: 'Route Academy',
-    year: '2025',
-    description: 'Comprehensive front-end training focused on React framework fundamentals, reusable components, state management, and building responsive user interfaces.',
-    files: ['Front-End.jpg'],
-  },
-  {
-    title: 'UI/UX Design Essentials',
-    issuer: 'Mahara Tech',
-    year: '2026',
-    description: 'Hands-on design certification covering user research, wireframing, prototyping, and interface design best practices using Figma.',
-    files: ['UX Design_page-0001.jpg'],
-  },
-];
+interface CertificationRecord {
+  id: string;
+  title: string;
+  issuer: string;
+  year: string;
+  description: string;
+  imageUrl: string;
+  order: number;
+}
+
+function buildCategories(skills: SkillRecord[]): SkillCategory[] {
+  const map = new Map<
+    string,
+    { icon: string; skills: Array<{ name: string; level: number; order: number }> }
+  >();
+
+  skills.forEach((skill) => {
+    if (!map.has(skill.category)) {
+      map.set(skill.category, { icon: skill.icon || 'CpuChipIcon', skills: [] });
+    }
+    map.get(skill.category)!.skills.push({
+      name: skill.name,
+      level: skill.level,
+      order: skill.order ?? 0,
+    });
+  });
+
+  return Array.from(map.entries()).map(([label, data]) => ({
+    label,
+    icon: data.icon,
+    skills: data.skills.sort((a, b) => (a.order ?? 0) - (b.order ?? 0)),
+  }));
+}
 
 function SkillBar({ name, level, index }: { name: string; level: number; index: number }) {
   const barRef = useRef<HTMLDivElement>(null);
@@ -98,7 +61,7 @@ function SkillBar({ name, level, index }: { name: string; level: number; index: 
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach(entry => {
+        entries.forEach((entry) => {
           if (entry.isIntersecting && barRef.current) {
             setTimeout(() => {
               if (barRef.current) {
@@ -136,15 +99,95 @@ function SkillBar({ name, level, index }: { name: string; level: number; index: 
 
 export default function SkillsSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const [skills, setSkills] = useState<SkillRecord[]>([]);
+  const [certifications, setCertifications] = useState<CertificationRecord[]>([]);
   const [showCertModal, setShowCertModal] = useState(false);
   const [certFiles, setCertFiles] = useState<Array<{ name: string; url: string }>>([]);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [activeCertTitle, setActiveCertTitle] = useState<string | null>(null);
 
+  const skillCategories = useMemo(() => buildCategories(skills), [skills]);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const [skillsResponse, certsResponse] = await Promise.all([
+          fetch('/api/skills', { cache: 'no-store' }),
+          fetch('/api/certifications', { cache: 'no-store' }),
+        ]);
+
+        if (skillsResponse.ok) {
+          const skillsData = await skillsResponse.json();
+          const incomingSkills = Array.isArray(skillsData.skills) ? skillsData.skills : [];
+          setSkills(
+            incomingSkills.length > 0
+              ? incomingSkills
+              : defaultSkills.map((skill, index) => ({
+                  id: String(index + 1),
+                  ...skill,
+                  order: skill.order ?? 0,
+                }))
+          );
+        } else {
+          setSkills(
+            defaultSkills.map((skill, index) => ({
+              id: String(index + 1),
+              ...skill,
+              order: skill.order ?? 0,
+            }))
+          );
+        }
+
+        if (certsResponse.ok) {
+          const certsData = await certsResponse.json();
+          const incomingCerts = Array.isArray(certsData.certifications)
+            ? certsData.certifications
+            : [];
+          setCertifications(
+            incomingCerts.length > 0
+              ? incomingCerts
+              : defaultCertifications.map((cert, index) => ({
+                  id: String(index + 1),
+                  ...cert,
+                  order: cert.order ?? 0,
+                }))
+          );
+        } else {
+          setCertifications(
+            defaultCertifications.map((cert, index) => ({
+              id: String(index + 1),
+              ...cert,
+              order: cert.order ?? 0,
+            }))
+          );
+        }
+      } catch (_err) {
+        setSkills(
+          defaultSkills.map((skill, index) => ({
+            id: String(index + 1),
+            ...skill,
+            order: skill.order ?? 0,
+          }))
+        );
+        setCertifications(
+          defaultCertifications.map((cert, index) => ({
+            id: String(index + 1),
+            ...cert,
+            order: cert.order ?? 0,
+          }))
+        );
+      } finally {
+        // no-op
+      }
+    };
+
+    load();
+  }, []);
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach(entry => {
+        entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add('opacity-100', 'translate-y-0');
             entry.target.classList.remove('opacity-0', 'translate-y-8');
@@ -155,10 +198,10 @@ export default function SkillsSection() {
     );
 
     const cards = sectionRef.current?.querySelectorAll('.skill-card');
-    cards?.forEach(card => observer.observe(card));
+    cards?.forEach((card) => observer.observe(card));
 
     return () => observer.disconnect();
-  }, []);
+  }, [skillCategories]);
 
   useEffect(() => {
     if (showCertModal) {
@@ -179,7 +222,8 @@ export default function SkillsSection() {
         <div
           className="absolute inset-0 opacity-[0.02]"
           style={{
-            backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(14,207,207,0.5) 40px, rgba(14,207,207,0.5) 41px)',
+            backgroundImage:
+              'repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(14,207,207,0.5) 40px, rgba(14,207,207,0.5) 41px)',
           }}
         />
       </div>
@@ -192,7 +236,8 @@ export default function SkillsSection() {
               03 // Skills
             </span>
             <h2 className="text-section-heading font-extrabold text-foreground">
-              Tech<br />
+              Tech
+              <br />
               <span className="gradient-text">Stack.</span>
             </h2>
           </div>
@@ -237,11 +282,25 @@ export default function SkillsSection() {
           </p>
           <div className="flex flex-wrap gap-2 justify-center md:justify-start">
             {[
-              'Git', 'GitHub', 'Zod', 'JWT', 'Passport.js',
-              'Mongoose', 'Sequelize', 'Adobe XD', 'SQL Server', 'Xampp',
-              'Postman', 'Swagger', 'PM2', 'Nodemailer', 'Multer',
-            ].map(tool => (
-              <span key={tool} className="skill-tag">{tool}</span>
+              'Git',
+              'GitHub',
+              'Zod',
+              'JWT',
+              'Passport.js',
+              'Mongoose',
+              'Sequelize',
+              'Adobe XD',
+              'SQL Server',
+              'Xampp',
+              'Postman',
+              'Swagger',
+              'PM2',
+              'Nodemailer',
+              'Multer',
+            ].map((tool) => (
+              <span key={tool} className="skill-tag">
+                {tool}
+              </span>
             ))}
           </div>
         </div>
@@ -257,27 +316,42 @@ export default function SkillsSection() {
                 key={cert.title}
                 role="button"
                 tabIndex={0}
-                  onClick={() => {
-                    const fileNames: string[] = (cert as any).files || [];
-                    const list = fileNames.map((name) => ({ name, url: `/api/certifications/${encodeURIComponent(name)}` }));
-                    setCertFiles(list);
-                    setActiveIndex(list.length > 0 ? 0 : null);
+                onClick={() => {
+                  if (!cert.imageUrl) {
+                    setCertFiles([]);
+                    setActiveIndex(null);
                     setActiveCertTitle(cert.title || null);
                     setShowCertModal(true);
-                  }}
-                onKeyDown={(e) => { if (e.key === 'Enter') { (e.target as HTMLElement).click(); } }}
+                    return;
+                  }
+                  setCertFiles([{ name: cert.title, url: cert.imageUrl }]);
+                  setActiveIndex(0);
+                  setActiveCertTitle(cert.title || null);
+                  setShowCertModal(true);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    (e.target as HTMLElement).click();
+                  }
+                }}
                 className="bento-card p-5 flex flex-col gap-3 transition-all duration-700 cursor-pointer hover:scale-[1.01]"
                 style={{ transitionDelay: `${i * 100}ms` }}
               >
                 <div className="flex items-start justify-between gap-2">
                   <h4 className="font-bold text-sm text-foreground leading-snug">{cert.title}</h4>
-                  <span className={`font-mono text-[9px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap shrink-0 ${
-                    cert.year === 'In Progress' ?'text-accent bg-accent/10 border border-accent/20' :'text-primary bg-primary/10 border border-primary/20'
-                  }`}>
+                  <span
+                    className={`font-mono text-[9px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap shrink-0 ${
+                      cert.year === 'In Progress'
+                        ? 'text-accent bg-accent/10 border border-accent/20'
+                        : 'text-primary bg-primary/10 border border-primary/20'
+                    }`}
+                  >
                     {cert.year}
                   </span>
                 </div>
-                <p className="font-mono text-[10px] text-primary uppercase tracking-wider">{cert.issuer}</p>
+                <p className="font-mono text-[10px] text-primary uppercase tracking-wider">
+                  {cert.issuer}
+                </p>
                 <p className="text-muted-foreground text-xs leading-relaxed">{cert.description}</p>
                 <div className="mt-2 text-[11px] font-mono text-primary flex items-center gap-2">
                   <span className="underline">View Certificates</span>
@@ -286,14 +360,19 @@ export default function SkillsSection() {
               </div>
             ))}
           </div>
-
         </div>
       </div>
       {showCertModal && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-6">
-          <div className="absolute inset-0 bg-black/90 backdrop-blur-md" onClick={() => setShowCertModal(false)} />
+          <div
+            className="absolute inset-0 bg-black/90 backdrop-blur-md"
+            onClick={() => setShowCertModal(false)}
+          />
           <div className="relative z-[10000] w-full flex items-center justify-center">
-            <div className="w-full max-w-[95vw] sm:max-w-5xl bg-card rounded-2xl p-4 sm:p-6 shadow-2xl border border-primary/10" style={{ borderWidth: '1px' }}>
+            <div
+              className="w-full max-w-[95vw] sm:max-w-5xl bg-card rounded-2xl p-4 sm:p-6 shadow-2xl border border-primary/10"
+              style={{ borderWidth: '1px' }}
+            >
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <h3 className="text-lg font-bold text-foreground">{activeCertTitle}</h3>
@@ -310,15 +389,17 @@ export default function SkillsSection() {
               {certFiles && certFiles.length > 0 && activeIndex !== null ? (
                 <div className="w-full flex items-center justify-center">
                   <div className="w-full bg-[#0b1116] rounded-lg overflow-auto flex items-center justify-center p-3 sm:p-6 max-h-[70vh]">
-                    <img
+                    <AppImage
                       src={certFiles[activeIndex].url}
                       alt={certFiles[activeIndex].name}
+                      width={1200}
+                      height={900}
                       className="object-contain max-h-[68vh] max-w-full"
                     />
                   </div>
                 </div>
               ) : (
-                <div className="text-muted-foreground">No certificate files available.</div>
+                <div className="text-muted-foreground">No certificate image available.</div>
               )}
             </div>
           </div>

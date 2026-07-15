@@ -22,7 +22,7 @@ export default function Header() {
     const handleScroll = () => {
       setScrolled(window.scrollY > 60);
 
-      const sections = navLinks.map(l => l.href.replace('#', ''));
+      const sections = navLinks.map((l) => l.href.replace('#', ''));
       for (const id of sections.reverse()) {
         const el = document.getElementById(id);
         if (el && window.scrollY >= el.offsetTop - 120) {
@@ -86,7 +86,8 @@ export default function Header() {
                   onClick={() => handleNavClick(link.href)}
                   className={`px-4 py-1.5 rounded-full text-xs font-medium tracking-wide transition-all duration-200 ${
                     activeSection === link.href.replace('#', '')
-                      ? 'bg-primary/10 text-primary' :'text-muted-foreground hover:text-foreground'
+                      ? 'bg-primary/10 text-primary'
+                      : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
                   {link.label}

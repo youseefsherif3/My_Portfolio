@@ -7,12 +7,14 @@ import SkillsSection from '@/app/components/SkillsSection';
 import BlogSection from '@/app/components/BlogSection';
 import ContactSection from '@/app/components/ContactSection';
 import CursorGlow from '@/app/components/CursorGlow';
+import VisitorTracker from '@/app/components/VisitorTracker';
 
 export default function HomePage() {
   return (
     <main className="relative bg-background min-h-screen">
       <div className="grain-overlay" aria-hidden="true" />
       <CursorGlow />
+      <VisitorTracker />
       <Header />
 
       <HeroSection />

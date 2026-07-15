@@ -2,7 +2,6 @@ import React from 'react';
 import AppLogo from '@/components/ui/AppLogo';
 import Icon from '@/components/ui/AppIcon';
 
-
 const socialLinks = [
   { icon: 'CodeBracketIcon', label: 'GitHub', href: 'https://github.com/youseefsherif3' },
   { icon: 'LinkIcon', label: 'LinkedIn', href: 'https://www.linkedin.com/in/youseef-sherif' },
@@ -22,7 +21,9 @@ export default function Footer() {
 
         {/* Copyright */}
         <div className="flex items-center gap-6 text-xs font-medium text-muted-foreground">
-          <span className="text-muted-foreground/60">© 2025 Youseef Sherif. All rights reserved.</span>
+          <span className="text-muted-foreground/60">
+            © 2025 Youseef Sherif. All rights reserved.
+          </span>
         </div>
 
         {/* Social Icons */}

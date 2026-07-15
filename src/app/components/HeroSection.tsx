@@ -7,7 +7,11 @@ const codeLines = [
   { indent: 0, code: 'const developer = {', color: 'text-foreground' },
   { indent: 1, code: 'name: "Youseef Sherif",', color: 'text-primary' },
   { indent: 1, code: 'role: "Backend Developer",', color: 'text-primary' },
-  { indent: 1, code: 'stack: ["Node.js", "Express.js", "NestJS", "MongoDB"],', color: 'text-primary' },
+  {
+    indent: 1,
+    code: 'stack: ["Node.js", "Express.js", "NestJS", "MongoDB"],',
+    color: 'text-primary',
+  },
   { indent: 1, code: 'also: ["TypeScript", "React.js", "PostgreSQL"],', color: 'text-primary' },
   { indent: 1, code: 'status: "open_to_work",', color: 'text-accent' },
   { indent: 0, code: '};', color: 'text-foreground' },
@@ -95,7 +99,8 @@ export default function HeroSection() {
         <div
           className="absolute inset-0 opacity-[0.03]"
           style={{
-            backgroundImage: 'linear-gradient(rgba(14,207,207,1) 1px, transparent 1px), linear-gradient(90deg, rgba(14,207,207,1) 1px, transparent 1px)',
+            backgroundImage:
+              'linear-gradient(rgba(14,207,207,1) 1px, transparent 1px), linear-gradient(90deg, rgba(14,207,207,1) 1px, transparent 1px)',
             backgroundSize: '60px 60px',
           }}
         />
@@ -103,7 +108,10 @@ export default function HeroSection() {
       </div>
 
       <div className="max-w-6xl mx-auto w-full relative z-10">
-        <div ref={textRef} className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12 lg:gap-16 items-center">
+        <div
+          ref={textRef}
+          className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12 lg:gap-16 items-center"
+        >
           {/* Left: Hero Text */}
           <div className="lg:col-span-7 flex flex-col gap-4 sm:gap-6">
             {/* Status badge */}
@@ -116,13 +124,14 @@ export default function HeroSection() {
 
             {/* Headline */}
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-hero font-extrabold text-foreground leading-tight">
-              Backend<br />
+              Backend
+              <br />
               <span className="gradient-text glow-text">Developer.</span>
             </h1>
 
             <p className="text-sm sm:text-base lg:text-lg text-muted-foreground leading-relaxed max-w-xl font-light">
-              I&apos;m Youseef Sherif — I architect and build high-performance, scalable backend systems with Node.js,
-              specializing in RESTful APIs and real-time applications.
+              I&apos;m Youseef Sherif — I architect and build high-performance, scalable backend
+              systems with Node.js, specializing in RESTful APIs and real-time applications.
             </p>
 
             {/* CTAs */}
@@ -146,8 +155,12 @@ export default function HeroSection() {
             <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-4 sm:gap-6 mt-2 sm:mt-4 pt-4 sm:pt-6 border-t border-border">
               {stats.map((stat) => (
                 <div key={stat.label} className="flex flex-col gap-0.5">
-                  <span className="font-mono text-lg sm:text-xl font-bold text-primary">{stat.value}</span>
-                  <span className="text-[9px] sm:text-[10px] text-muted-foreground uppercase tracking-widest font-medium">{stat.label}</span>
+                  <span className="font-mono text-lg sm:text-xl font-bold text-primary">
+                    {stat.value}
+                  </span>
+                  <span className="text-[9px] sm:text-[10px] text-muted-foreground uppercase tracking-widest font-medium">
+                    {stat.label}
+                  </span>
                 </div>
               ))}
             </div>
@@ -183,18 +196,25 @@ export default function HeroSection() {
                         <span className="text-muted-foreground/30 mr-3 sm:mr-4 select-none text-[9px] sm:text-[10px]">
                           {String(i + 1).padStart(2, '0')}
                         </span>
-                        <span style={{ paddingLeft: `${line.indent * 12}px` }} className={line.color}>
+                        <span
+                          style={{ paddingLeft: `${line.indent * 12}px` }}
+                          className={line.color}
+                        >
                           {line.code}
                         </span>
                       </span>
                     ) : (
-                      <span className="text-muted-foreground/30 text-[9px] sm:text-[10px] select-none">{String(i + 1).padStart(2, '0')}</span>
+                      <span className="text-muted-foreground/30 text-[9px] sm:text-[10px] select-none">
+                        {String(i + 1).padStart(2, '0')}
+                      </span>
                     )}
                   </div>
                 ))}
                 {visibleLines >= codeLines.length && (
                   <div className="mt-2">
-                    <span className="text-muted-foreground/30 mr-3 sm:mr-4 text-[9px] sm:text-[10px] select-none">10</span>
+                    <span className="text-muted-foreground/30 mr-3 sm:mr-4 text-[9px] sm:text-[10px] select-none">
+                      10
+                    </span>
                     <span className="text-primary typing-cursor" />
                   </div>
                 )}
@@ -205,7 +225,9 @@ export default function HeroSection() {
             <div className="absolute -bottom-4 -left-4 glass-card rounded-xl px-3 sm:px-4 py-2 sm:py-3 animate-pulse-glow hidden lg:block">
               <div className="flex items-center gap-2">
                 <Icon name="BoltIcon" size={14} className="text-primary" />
-                <span className="font-mono text-[10px] text-primary font-bold">Node.js v20 LTS</span>
+                <span className="font-mono text-[10px] text-primary font-bold">
+                  Node.js v20 LTS
+                </span>
               </div>
             </div>
           </div>
@@ -213,7 +235,9 @@ export default function HeroSection() {
 
         {/* Scroll indicator */}
         <div className="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-100 sm:opacity-40">
-          <span className="font-mono text-[9px] text-muted-foreground uppercase tracking-widest">Scroll</span>
+          <span className="font-mono text-[9px] text-muted-foreground uppercase tracking-widest">
+            Scroll
+          </span>
           <div className="w-px h-8 sm:h-10 bg-gradient-to-b from-primary to-transparent" />
         </div>
       </div>

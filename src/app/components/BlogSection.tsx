@@ -38,7 +38,8 @@ const posts: BlogPost[] = [
     readTime: '9 min read',
     date: 'Apr 2025',
     image: 'https://images.unsplash.com/photo-1593720217529-01f0a5d09aed',
-    imageAlt: 'Dark monitor showing TypeScript code with class definitions and interface declarations',
+    imageAlt:
+      'Dark monitor showing TypeScript code with class definitions and interface declarations',
     href: 'https://github.com/youseefsherif3/Social-Media-App',
   },
   {
@@ -91,7 +92,8 @@ export default function BlogSection() {
               04 // Writing
             </span>
             <h2 className="text-section-heading font-extrabold text-foreground">
-              Technical<br />
+              Technical
+              <br />
               <span className="gradient-text">Writing.</span>
             </h2>
           </div>
@@ -145,7 +147,9 @@ export default function BlogSection() {
                   <div className="flex items-center gap-3">
                     <span className="font-mono text-[9px] text-muted-foreground">{post.date}</span>
                     <span className="w-0.5 h-0.5 rounded-full bg-muted-foreground/40" />
-                    <span className="font-mono text-[9px] text-muted-foreground">{post.readTime}</span>
+                    <span className="font-mono text-[9px] text-muted-foreground">
+                      {post.readTime}
+                    </span>
                   </div>
                   <Icon
                     name="ArrowRightIcon"

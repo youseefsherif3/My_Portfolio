@@ -41,7 +41,19 @@ export default function ContactSection() {
   const [sendError, setSendError] = useState<string | null>(null);
 
   // Custom select component (inline) - placed here to avoid creating separate file
-  function CustomSelect({ id, name, value, onChange, error }: { id: string; name: string; value: string; onChange: (val: string) => void; error?: boolean }) {
+  function CustomSelect({
+    id,
+    name,
+    value,
+    onChange,
+    error,
+  }: {
+    id: string;
+    name: string;
+    value: string;
+    onChange: (val: string) => void;
+    error?: boolean;
+  }) {
     const options = [
       { value: '', label: 'Select a topic...' },
       { value: 'backend-api', label: 'Backend API Development' },
@@ -70,30 +82,45 @@ export default function ContactSection() {
       return () => document.removeEventListener('keydown', onKey);
     }, []);
 
-    const selected = options.find(o => o.value === value) || options[0];
+    const selected = options.find((o) => o.value === value) || options[0];
 
     return (
       <div ref={ref} className={`relative w-full`}>
         <button
           type="button"
+          id={id}
+          name={name}
+          aria-controls={`${id}-listbox`}
           aria-haspopup="listbox"
           aria-expanded={open}
           onClick={() => setOpen((s) => !s)}
-          onKeyDown={(e) => { if (e.key === 'ArrowDown') setOpen(true); }}
+          onKeyDown={(e) => {
+            if (e.key === 'ArrowDown') setOpen(true);
+          }}
           className={`w-full pl-4 pr-10 py-3 bg-input border ${error ? 'border-red-500/50' : 'border-border'} rounded-xl font-mono text-sm text-foreground text-left flex items-center justify-between focus:outline-none`}
         >
-          <span className={`${selected.value === '' ? 'text-muted-foreground/40' : ''}`}>{selected.label}</span>
+          <span className={`${selected.value === '' ? 'text-muted-foreground/40' : ''}`}>
+            {selected.label}
+          </span>
           <Icon name="ChevronDownIcon" size={16} className="text-muted-foreground" />
         </button>
 
         {open && (
-          <ul role="listbox" tabIndex={-1} className="absolute left-0 right-0 mt-2 bg-card border border-border rounded-xl p-2 max-h-56 overflow-auto z-50 shadow-lg">
+          <ul
+            id={`${id}-listbox`}
+            role="listbox"
+            tabIndex={-1}
+            className="absolute left-0 right-0 mt-2 bg-card border border-border rounded-xl p-2 max-h-56 overflow-auto z-50 shadow-lg"
+          >
             {options.map((opt) => (
               <li
                 key={opt.value}
                 role="option"
                 aria-selected={opt.value === value}
-                onClick={() => { onChange(opt.value); setOpen(false); }}
+                onClick={() => {
+                  onChange(opt.value);
+                  setOpen(false);
+                }}
                 className={`px-3 py-2 rounded-md cursor-pointer font-mono text-sm ${opt.value === value ? 'bg-primary/10 text-primary' : 'text-foreground hover:bg-primary/5'}`}
               >
                 {opt.label}
@@ -108,9 +135,11 @@ export default function ContactSection() {
   const validate = (): boolean => {
     const newErrors: Partial<FormState> = {};
     if (!form.name.trim()) newErrors.name = 'Name is required';
-    if (!form.email.trim() || !/\S+@\S+\.\S+/.test(form.email)) newErrors.email = 'Valid email required';
+    if (!form.email.trim() || !/\S+@\S+\.\S+/.test(form.email))
+      newErrors.email = 'Valid email required';
     if (!form.subject.trim()) newErrors.subject = 'Subject is required';
-    if (!form.message.trim() || form.message.length < 20) newErrors.message = 'Message must be at least 20 characters';
+    if (!form.message.trim() || form.message.length < 20)
+      newErrors.message = 'Message must be at least 20 characters';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -128,18 +157,20 @@ export default function ContactSection() {
       });
       if (!res.ok) throw new Error('Send failed');
       setSubmitted(true);
-    } catch (err) {
+    } catch (_err) {
       setSendError('Failed to send. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
+    setForm((prev) => ({ ...prev, [name]: value }));
     if (errors[name as keyof FormState]) {
-      setErrors(prev => ({ ...prev, [name]: undefined }));
+      setErrors((prev) => ({ ...prev, [name]: undefined }));
     }
   };
 
@@ -160,7 +191,8 @@ export default function ContactSection() {
             Let&apos;s <span className="gradient-text">Build Together.</span>
           </h2>
           <p className="text-muted-foreground max-w-md mx-auto text-sm leading-relaxed">
-            I&apos;m always interested in hearing about new projects and opportunities. Whether you need a robust backend system, API development, or UI/UX Designs, I&apos;m here to help.
+            I&apos;m always interested in hearing about new projects and opportunities. Whether you
+            need a robust backend system, API development, or UI/UX Designs, I&apos;m here to help.
           </p>
         </div>
 
@@ -171,14 +203,19 @@ export default function ContactSection() {
             <div className="bento-card p-6">
               <div className="flex items-center gap-2.5 mb-4">
                 <span className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse-glow" />
-                <span className="font-mono text-xs font-bold text-primary tracking-wide">Currently Available</span>
+                <span className="font-mono text-xs font-bold text-primary tracking-wide">
+                  Currently Available
+                </span>
               </div>
               <p className="text-muted-foreground text-xs leading-relaxed mb-4">
-                Open to full-time backend roles, freelance projects, and interesting technical collaborations.
+                Open to full-time backend roles, freelance projects, and interesting technical
+                collaborations.
               </p>
               <div className="flex flex-wrap gap-2">
-                {['Full-time', 'Freelance', 'Remote'].map(type => (
-                  <span key={type} className="skill-tag">{type}</span>
+                {['Full-time', 'Freelance', 'Remote'].map((type) => (
+                  <span key={type} className="skill-tag">
+                    {type}
+                  </span>
                 ))}
               </div>
             </div>
@@ -197,12 +234,18 @@ export default function ContactSection() {
                     <Icon name={method.icon as 'EnvelopeIcon'} size={16} />
                   </div>
                   <div className="min-w-0">
-                    <p className="font-mono text-[9px] text-muted-foreground uppercase tracking-wider mb-0.5">{method.label}</p>
+                    <p className="font-mono text-[9px] text-muted-foreground uppercase tracking-wider mb-0.5">
+                      {method.label}
+                    </p>
                     <p className="font-mono text-xs text-foreground truncate group-hover:text-primary transition-colors">
                       {method.value}
                     </p>
                   </div>
-                  <Icon name="ArrowTopRightOnSquareIcon" size={12} className="text-muted-foreground ml-auto shrink-0 group-hover:text-primary transition-colors" />
+                  <Icon
+                    name="ArrowTopRightOnSquareIcon"
+                    size={12}
+                    className="text-muted-foreground ml-auto shrink-0 group-hover:text-primary transition-colors"
+                  />
                 </a>
               ))}
             </div>
@@ -211,7 +254,9 @@ export default function ContactSection() {
             <div className="glass-card rounded-xl p-4">
               <div className="flex items-center gap-2 mb-1">
                 <Icon name="ClockIcon" size={14} className="text-primary" />
-                <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider font-bold">Avg Response Time</span>
+                <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider font-bold">
+                  Avg Response Time
+                </span>
               </div>
               <span className="font-mono text-xl font-bold text-primary">&lt; 24h</span>
             </div>
@@ -230,7 +275,10 @@ export default function ContactSection() {
                     Thanks for reaching out. I&apos;ll get back to you within 24 hours.
                   </p>
                   <button
-                    onClick={() => { setSubmitted(false); setForm(initialForm); }}
+                    onClick={() => {
+                      setSubmitted(false);
+                      setForm(initialForm);
+                    }}
                     className="mt-2 font-mono text-xs text-primary hover:underline"
                   >
                     Send another message
@@ -241,7 +289,10 @@ export default function ContactSection() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     {/* Name */}
                     <div>
-                      <label htmlFor="name" className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider font-bold block mb-2">
+                      <label
+                        htmlFor="name"
+                        className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider font-bold block mb-2"
+                      >
                         Full Name
                       </label>
                       <input
@@ -262,7 +313,10 @@ export default function ContactSection() {
 
                     {/* Email */}
                     <div>
-                      <label htmlFor="email" className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider font-bold block mb-2">
+                      <label
+                        htmlFor="email"
+                        className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider font-bold block mb-2"
+                      >
                         Email Address
                       </label>
                       <input
@@ -284,7 +338,10 @@ export default function ContactSection() {
 
                   {/* Subject */}
                   <div>
-                    <label htmlFor="subject" className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider font-bold block mb-2">
+                    <label
+                      htmlFor="subject"
+                      className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider font-bold block mb-2"
+                    >
                       What do you need?
                     </label>
                     <CustomSelect
@@ -292,11 +349,11 @@ export default function ContactSection() {
                       name="subject"
                       value={form.subject}
                       onChange={(val: string) => {
-                        setForm(prev => ({ ...prev, subject: val }));
-                        if (errors.subject) setErrors(prev => ({ ...prev, subject: undefined }));
+                        setForm((prev) => ({ ...prev, subject: val }));
+                        if (errors.subject) setErrors((prev) => ({ ...prev, subject: undefined }));
                       }}
                       error={!!errors.subject}
-                      />
+                    />
                     {errors.subject && (
                       <p className="font-mono text-[10px] text-red-400 mt-1.5">{errors.subject}</p>
                     )}
@@ -304,7 +361,10 @@ export default function ContactSection() {
 
                   {/* Message */}
                   <div>
-                    <label htmlFor="message" className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider font-bold block mb-2">
+                    <label
+                      htmlFor="message"
+                      className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider font-bold block mb-2"
+                    >
                       Project Details
                     </label>
                     <textarea
@@ -324,7 +384,9 @@ export default function ContactSection() {
                       ) : (
                         <span />
                       )}
-                      <span className={`font-mono text-[10px] ${form.message.length > 500 ? 'text-red-400' : 'text-muted-foreground/50'}`}>
+                      <span
+                        className={`font-mono text-[10px] ${form.message.length > 500 ? 'text-red-400' : 'text-muted-foreground/50'}`}
+                      >
                         {form.message.length}/500
                       </span>
                     </div>

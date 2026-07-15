@@ -1,26 +1,27 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { connectToDatabase } from '@/lib/mongodb';
+import { Certification, type CertificationDocument } from '@/lib/models/Certification';
 
 export async function GET() {
   try {
-    const certDir = path.join(process.cwd(), 'certifications');
-    if (!fs.existsSync(certDir)) {
-      return NextResponse.json({ files: [] });
-    }
+    await connectToDatabase();
 
-    const files = fs.readdirSync(certDir).filter((f) => {
-      const ext = path.extname(f).toLowerCase();
-      return ['.png', '.jpg', '.jpeg', '.svg', '.webp', '.gif'].includes(ext);
-    });
+    const certs = await Certification.find()
+      .sort({ order: 1, createdAt: -1 })
+      .lean<CertificationDocument[]>();
 
-    const list = files.map((name) => ({
-      name,
-      url: `/api/certifications/${encodeURIComponent(name)}`,
+    const payload = certs.map((cert) => ({
+      id: cert._id.toString(),
+      title: cert.title,
+      issuer: cert.issuer,
+      year: cert.year,
+      description: cert.description,
+      imageUrl: cert.imageUrl || '',
+      order: cert.order ?? 0,
     }));
 
-    return NextResponse.json({ files: list });
+    return NextResponse.json({ certifications: payload });
   } catch (_err) {
-    return NextResponse.json({ files: [] }, { status: 500 });
+    return NextResponse.json({ certifications: [] }, { status: 500 });
   }
 }

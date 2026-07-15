@@ -25,11 +25,10 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
   title: 'Youseef Sherif — Backend Engineer, Node.js',
-  description: 'Backend developer specializing in Node.js, APIs, and distributed systems. Explore projects, skills, and technical writing built for scale.',
+  description:
+    'Backend developer specializing in Node.js, APIs, and distributed systems. Explore projects, skills, and technical writing built for scale.',
   icons: {
-    icon: [
-      { url: '/favicon.ico', type: 'image/x-icon' }
-    ],
+    icon: [{ url: '/favicon.ico', type: 'image/x-icon' }],
   },
   openGraph: {
     title: 'Youseef Sherif — Backend Engineer',
@@ -45,9 +44,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${dmSans.variable} ${jetbrainsMono.variable} dark`}>
-      <body className={dmSans.className}>
-        {children}
-</body>
+      <body className={dmSans.className}>{children}</body>
     </html>
   );
 }
