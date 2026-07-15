@@ -46,7 +46,8 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({ ok: true });
-  } catch (_err) {
+  } catch (err) {
+    console.error('Contact API Error:', err);
     return NextResponse.json({ ok: false, error: 'Send failed' }, { status: 500 });
   }
 }
