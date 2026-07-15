@@ -2,6 +2,7 @@ import React from 'react';
 import type { Metadata, Viewport } from 'next';
 import { DM_Sans, JetBrains_Mono } from 'next/font/google';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import { Analytics } from '@vercel/analytics/react';
 import '../styles/tailwind.css';
 
 const dmSans = DM_Sans({
@@ -48,8 +49,10 @@ export default function RootLayout({
       <body className={dmSans.className}>
         {children}
         <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   );
 }
+
 
