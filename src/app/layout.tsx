@@ -45,12 +45,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${dmSans.variable} ${jetbrainsMono.variable} dark`}>
-      <body className={dmSans.className}>
+    <html lang="en" className={`${dmSans.variable} ${jetbrainsMono.variable} dark`} suppressHydrationWarning>
+      <body className={dmSans.className} suppressHydrationWarning>
         {children}
         <SpeedInsights />
         <Analytics />
-      </body>
+        </body>
     </html>
   );
 }

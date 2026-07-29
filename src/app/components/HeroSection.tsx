@@ -30,6 +30,33 @@ export default function HeroSection() {
   const heroRef = useRef<HTMLElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
   const [visibleLines, setVisibleLines] = useState(0);
+  const [cvUrl, setCvUrl] = useState('/cv.pdf');
+  const [showCvModal, setShowCvModal] = useState(false);
+
+  useEffect(() => {
+    fetch('/api/settings')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.cvUrl) setCvUrl(data.cvUrl);
+      })
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    if (showCvModal) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setShowCvModal(false);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [showCvModal]);
 
   useEffect(() => {
     let i = 0;
@@ -80,10 +107,6 @@ export default function HeroSection() {
 
   const scrollToProjects = () => {
     document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  const scrollToContact = () => {
-    document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
@@ -144,10 +167,12 @@ export default function HeroSection() {
                 <Icon name="ArrowDownIcon" size={14} />
               </button>
               <button
-                onClick={scrollToContact}
-                className="magnetic-btn w-full sm:w-auto flex items-center justify-center gap-2 sm:gap-2.5 px-6 sm:px-8 py-3 sm:py-4 border border-border text-foreground rounded-full font-bold text-xs sm:text-sm tracking-wide hover:border-primary/40 hover:text-primary transition-all duration-300"
+                type="button"
+                onClick={() => setShowCvModal(true)}
+                className="magnetic-btn w-full sm:w-auto flex items-center justify-center gap-4 sm:gap-5 px-6 sm:px-8 py-3 sm:py-4 border border-border text-foreground rounded-full font-bold text-xs sm:text-sm tracking-wide hover:border-primary/40 hover:text-primary transition-all duration-300 cursor-pointer group"
               >
-                Contact Me
+                <Icon name="DocumentTextIcon" size={18} className="text-primary mr-1.5 sm:mr-2 transition-transform duration-300 group-hover:scale-110 shrink-0" />
+                <span className="font-semibold">View CV</span>
               </button>
             </div>
 
@@ -241,6 +266,50 @@ export default function HeroSection() {
           <div className="w-px h-8 sm:h-10 bg-gradient-to-b from-primary to-transparent" />
         </div>
       </div>
+
+      {/* Certificate-style CV Modal Overlay */}
+      {showCvModal && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-6">
+          <div
+            className="absolute inset-0 bg-black/90 backdrop-blur-md"
+            onClick={() => setShowCvModal(false)}
+          />
+          <div className="relative z-[10000] w-full flex items-center justify-center">
+            <div
+              className="w-full max-w-[95vw] sm:max-w-5xl bg-card rounded-2xl p-4 sm:p-6 shadow-2xl border border-primary/10"
+              style={{ borderWidth: '1px' }}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className="text-lg font-bold text-foreground">Youseef Sherif</h3>
+                  <p className="text-[12px] text-muted-foreground mt-0.5">CV / Resume</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowCvModal(false)}
+                  className="text-muted-foreground bg-transparent border border-transparent px-3 py-1 rounded-md hover:text-primary transition-colors cursor-pointer"
+                >
+                  Close
+                </button>
+              </div>
+
+              <div className="w-full flex items-center justify-center">
+                <div className="w-full bg-[#0b1116] rounded-lg overflow-hidden flex items-center justify-center h-[72vh]">
+                  {cvUrl ? (
+                    <iframe
+                      src={`${cvUrl}#toolbar=0&navpanes=0&scrollbar=0`}
+                      className="w-full h-full border-0"
+                      title="CV Preview"
+                    />
+                  ) : (
+                    <div className="text-muted-foreground">No CV document available.</div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

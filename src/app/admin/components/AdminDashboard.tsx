@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState, type Dispatch, type FormEvent, type SetStateAction } from 'react';
 import { signOut } from 'next-auth/react';
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import Icon from '@/components/ui/AppIcon';
 
 interface Project {
   id: string;
@@ -133,13 +134,284 @@ function mapCertificationToForm(cert: Certification): CertificationFormState {
   };
 }
 
+interface ExperienceItem {
+  id: string;
+  title: string;
+  company: string;
+  companyUrl: string;
+  location: string;
+  period: string;
+  description: string;
+  technologies: string[];
+  order: number;
+}
+
+interface ExperienceFormState {
+  title: string;
+  company: string;
+  companyUrl: string;
+  location: string;
+  period: string;
+  description: string;
+  technologies: string;
+  order: string;
+}
+
+const blankExpForm: ExperienceFormState = {
+  title: '',
+  company: '',
+  companyUrl: '',
+  location: '',
+  period: '',
+  description: '',
+  technologies: '',
+  order: '0',
+};
+
+function mapExperienceToForm(exp: ExperienceItem): ExperienceFormState {
+  return {
+    title: exp.title,
+    company: exp.company,
+    companyUrl: exp.companyUrl || '',
+    location: exp.location || '',
+    period: exp.period,
+    description: exp.description || '',
+    technologies: (exp.technologies || []).join(', '),
+    order: String(exp.order ?? 0),
+  };
+}
+
+const MONTH_NAMES = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+];
+
+const YEARS_LIST = Array.from({ length: 25 }, (_, i) => String(new Date().getFullYear() - 15 + i));
+
+function parsePeriodString(val: string) {
+  if (!val) return { startMonth: '', startYear: '', endMonth: '', endYear: '', isPresent: false };
+  const isPresent = val.toLowerCase().includes('present');
+  const parts = val.split('-').map((s) => s.trim());
+  const startPart = parts[0] || '';
+  const endPart = parts[1] || '';
+
+  let startMonth = '';
+  let startYear = '';
+  if (startPart) {
+    const tokens = startPart.split(' ');
+    for (const t of tokens) {
+      if (/^\d{4}$/.test(t)) {
+        startYear = t;
+      } else {
+        const found = MONTH_NAMES.find((m) => m.toLowerCase().startsWith(t.toLowerCase()));
+        if (found) startMonth = found;
+      }
+    }
+  }
+
+  let endMonth = '';
+  let endYear = '';
+  if (!isPresent && endPart) {
+    const tokens = endPart.split(' ');
+    for (const t of tokens) {
+      if (/^\d{4}$/.test(t)) {
+        endYear = t;
+      } else {
+        const found = MONTH_NAMES.find((m) => m.toLowerCase().startsWith(t.toLowerCase()));
+        if (found) endMonth = found;
+      }
+    }
+  }
+
+  return { startMonth, startYear, endMonth, endYear, isPresent };
+}
+
+function DatePeriodPicker({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (val: string) => void;
+}) {
+  const parsed = useMemo(() => parsePeriodString(value), [value]);
+
+  const [startMonth, setStartMonth] = useState(parsed.startMonth);
+  const [startYear, setStartYear] = useState(parsed.startYear);
+  const [endMonth, setEndMonth] = useState(parsed.endMonth);
+  const [endYear, setEndYear] = useState(parsed.endYear);
+  const [isPresent, setIsPresent] = useState(parsed.isPresent);
+
+  useEffect(() => {
+    const p = parsePeriodString(value);
+    setStartMonth(p.startMonth);
+    setStartYear(p.startYear);
+    setEndMonth(p.endMonth);
+    setEndYear(p.endYear);
+    setIsPresent(p.isPresent);
+  }, [value]);
+
+  const update = (sm: string, sy: string, em: string, ey: string, pres: boolean) => {
+    setStartMonth(sm);
+    setStartYear(sy);
+    setEndMonth(em);
+    setEndYear(ey);
+    setIsPresent(pres);
+
+    const start = [sm, sy].filter(Boolean).join(' ');
+    if (pres) {
+      onChange(start ? `${start} - Present` : 'Present');
+      return;
+    }
+
+    const end = [em, ey].filter(Boolean).join(' ');
+    if (start && end) {
+      onChange(`${start} - ${end}`);
+    } else if (start) {
+      onChange(start);
+    } else if (end) {
+      onChange(end);
+    } else {
+      onChange('');
+    }
+  };
+
+  return (
+    <>
+      {/* Start Date Dropdowns */}
+      <div className="grid grid-cols-2 gap-2">
+        <div className="relative">
+          <select
+            className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground focus:border-primary focus:outline-none transition-colors appearance-none cursor-pointer pr-9"
+            value={startMonth}
+            onChange={(e) => update(e.target.value, startYear, endMonth, endYear, isPresent)}
+          >
+            <option value="" className="bg-background text-muted-foreground">
+              Start Month
+            </option>
+            {MONTH_NAMES.map((m) => (
+              <option key={m} value={m} className="bg-background text-foreground">
+                {m}
+              </option>
+            ))}
+          </select>
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground">
+            <Icon name="ChevronDownIcon" size={14} />
+          </div>
+        </div>
+
+        <div className="relative">
+          <select
+            className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm font-mono text-foreground focus:border-primary focus:outline-none transition-colors appearance-none cursor-pointer pr-9"
+            value={startYear}
+            onChange={(e) => update(startMonth, e.target.value, endMonth, endYear, isPresent)}
+          >
+            <option value="" className="bg-background text-muted-foreground">
+              Start Year
+            </option>
+            {YEARS_LIST.map((y) => (
+              <option key={y} value={y} className="bg-background text-foreground">
+                {y}
+              </option>
+            ))}
+          </select>
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground">
+            <Icon name="ChevronDownIcon" size={14} />
+          </div>
+        </div>
+      </div>
+
+      {/* End Date Dropdowns */}
+      <div className="grid grid-cols-2 gap-2">
+        <div className="relative">
+          <select
+            disabled={isPresent}
+            className={`w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground focus:border-primary focus:outline-none transition-colors appearance-none cursor-pointer pr-9 ${
+              isPresent ? 'opacity-40 cursor-not-allowed' : ''
+            }`}
+            value={endMonth}
+            onChange={(e) => update(startMonth, startYear, e.target.value, endYear, isPresent)}
+          >
+            <option value="" className="bg-background text-muted-foreground">
+              End Month
+            </option>
+            {MONTH_NAMES.map((m) => (
+              <option key={m} value={m} className="bg-background text-foreground">
+                {m}
+              </option>
+            ))}
+          </select>
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground">
+            <Icon name="ChevronDownIcon" size={14} />
+          </div>
+        </div>
+
+        <div className="relative">
+          <select
+            disabled={isPresent}
+            className={`w-full rounded-xl border border-border bg-background px-4 py-3 text-sm font-mono text-foreground focus:border-primary focus:outline-none transition-colors appearance-none cursor-pointer pr-9 ${
+              isPresent ? 'opacity-40 cursor-not-allowed' : ''
+            }`}
+            value={endYear}
+            onChange={(e) => update(startMonth, startYear, endMonth, e.target.value, isPresent)}
+          >
+            <option value="" className="bg-background text-muted-foreground">
+              End Year
+            </option>
+            {YEARS_LIST.map((y) => (
+              <option key={y} value={y} className="bg-background text-foreground">
+                {y}
+              </option>
+            ))}
+          </select>
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground">
+            <Icon name="ChevronDownIcon" size={14} />
+          </div>
+        </div>
+      </div>
+
+      {/* Toggle Checkbox Button - 100% Identical to Input Fields */}
+      <div className="md:col-span-2">
+        <button
+          type="button"
+          onClick={() => update(startMonth, startYear, endMonth, endYear, !isPresent)}
+          className={`w-full rounded-xl border px-4 py-3 text-sm flex items-center gap-3 transition-colors cursor-pointer ${
+            isPresent
+              ? 'border-primary/60 bg-primary/10 text-primary font-medium shadow-glow-sm'
+              : 'border-border bg-background text-foreground hover:border-primary/50'
+          }`}
+        >
+          <div
+            className={`w-4 h-4 rounded border flex items-center justify-center transition-colors shrink-0 ${
+              isPresent ? 'border-primary bg-primary text-primary-foreground' : 'border-border bg-background'
+            }`}
+          >
+            {isPresent && <Icon name="CheckIcon" size={12} />}
+          </div>
+          <span>Currently Work Here (Present)</span>
+        </button>
+      </div>
+    </>
+  );
+}
+
 export default function AdminDashboard({ adminEmail: _adminEmail }: { adminEmail: string }) {
   const [activeTab, setActiveTab] = useState<
-    'overview' | 'projects' | 'skills' | 'certs' | 'settings'
+    'overview' | 'projects' | 'skills' | 'certs' | 'experiences' | 'settings'
   >('overview');
   const [projects, setProjects] = useState<Project[]>([]);
   const [skills, setSkills] = useState<Skill[]>([]);
   const [certifications, setCertifications] = useState<Certification[]>([]);
+  const [experiences, setExperiences] = useState<ExperienceItem[]>([]);
   const [analyticsTotal, setAnalyticsTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -149,15 +421,20 @@ export default function AdminDashboard({ adminEmail: _adminEmail }: { adminEmail
   const [skillsSeedLoading, setSkillsSeedLoading] = useState(false);
   const [certSeedMessage, setCertSeedMessage] = useState('');
   const [certSeedLoading, setCertSeedLoading] = useState(false);
+  const [expSeedMessage, setExpSeedMessage] = useState('');
+  const [expSeedLoading, setExpSeedLoading] = useState(false);
   const [form, setForm] = useState<ProjectFormState>(blankForm);
   const [skillForm, setSkillForm] = useState<SkillFormState>(blankSkillForm);
   const [certForm, setCertForm] = useState<CertificationFormState>(blankCertForm);
+  const [expForm, setExpForm] = useState<ExperienceFormState>(blankExpForm);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingForm, setEditingForm] = useState<ProjectFormState>(blankForm);
   const [editingSkillId, setEditingSkillId] = useState<string | null>(null);
   const [editingSkillForm, setEditingSkillForm] = useState<SkillFormState>(blankSkillForm);
   const [editingCertId, setEditingCertId] = useState<string | null>(null);
   const [editingCertForm, setEditingCertForm] = useState<CertificationFormState>(blankCertForm);
+  const [editingExpId, setEditingExpId] = useState<string | null>(null);
+  const [editingExpForm, setEditingExpForm] = useState<ExperienceFormState>(blankExpForm);
   const [uploadingProjectImage, setUploadingProjectImage] = useState(false);
   const [uploadingCertImage, setUploadingCertImage] = useState(false);
   const [settingsEmail, setSettingsEmail] = useState('');
@@ -167,6 +444,8 @@ export default function AdminDashboard({ adminEmail: _adminEmail }: { adminEmail
   const [settingsMessage, setSettingsMessage] = useState('');
   const [settingsLoading, setSettingsLoading] = useState(false);
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
+  const [cvUrlSetting, setCvUrlSetting] = useState('/cv.pdf');
+  const [uploadingCv, setUploadingCv] = useState(false);
 
   const sortedProjects = useMemo(
     () => [...projects].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)),
@@ -184,6 +463,11 @@ export default function AdminDashboard({ adminEmail: _adminEmail }: { adminEmail
   const sortedCertifications = useMemo(
     () => [...certifications].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)),
     [certifications]
+  );
+
+  const sortedExperiences = useMemo(
+    () => [...experiences].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)),
+    [experiences]
   );
 
   const tagChartData = useMemo(() => {
@@ -224,12 +508,14 @@ export default function AdminDashboard({ adminEmail: _adminEmail }: { adminEmail
           skillsResponse,
           certsResponse,
           settingsResponse,
+          experiencesResponse,
         ] = await Promise.all([
           fetch('/api/admin/projects', { credentials: 'include' }),
           fetch('/api/admin/analytics', { credentials: 'include' }),
           fetch('/api/admin/skills', { credentials: 'include' }),
           fetch('/api/admin/certifications', { credentials: 'include' }),
           fetch('/api/admin/settings', { credentials: 'include' }),
+          fetch('/api/admin/experiences', { credentials: 'include' }),
         ]);
 
         if (!projectsResponse.ok) {
@@ -254,9 +540,15 @@ export default function AdminDashboard({ adminEmail: _adminEmail }: { adminEmail
           setCertifications(certsData.certifications || []);
         }
 
+        if (experiencesResponse.ok) {
+          const experiencesData = await experiencesResponse.json();
+          setExperiences(experiencesData.experiences || []);
+        }
+
         if (settingsResponse.ok) {
           const settingsData = await settingsResponse.json();
           setSettingsEmail(String(settingsData.email || ''));
+          setCvUrlSetting(String(settingsData.cvUrl || '/cv.pdf'));
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Something went wrong');
@@ -721,6 +1013,184 @@ export default function AdminDashboard({ adminEmail: _adminEmail }: { adminEmail
     }
   };
 
+  const updateExpField = (
+    setter: Dispatch<SetStateAction<ExperienceFormState>>,
+    field: keyof ExperienceFormState,
+    value: string
+  ) => {
+    setter((current) => ({
+      ...current,
+      [field]: value,
+    }));
+  };
+
+  const handleExpCreate = async (event: FormEvent) => {
+    event.preventDefault();
+    setError('');
+
+    try {
+      const response = await fetch('/api/admin/experiences', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          title: expForm.title,
+          company: expForm.company,
+          companyUrl: expForm.companyUrl,
+          location: expForm.location,
+          period: expForm.period,
+          description: expForm.description,
+          technologies: expForm.technologies
+            .split(',')
+            .map((s) => s.trim())
+            .filter(Boolean),
+          order: Number(expForm.order) || 0,
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to create experience');
+      }
+
+      const data = await response.json();
+      setExperiences((current) => [...current, data.experience]);
+      setExpForm(blankExpForm);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to create experience');
+    }
+  };
+
+  const startExpEditing = (exp: ExperienceItem) => {
+    setEditingExpId(exp.id);
+    setEditingExpForm(mapExperienceToForm(exp));
+  };
+
+  const cancelExpEditing = () => {
+    setEditingExpId(null);
+    setEditingExpForm(blankExpForm);
+  };
+
+  const handleExpUpdate = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!editingExpId) return;
+
+    setError('');
+
+    try {
+      const response = await fetch(`/api/admin/experiences/${editingExpId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          title: editingExpForm.title,
+          company: editingExpForm.company,
+          companyUrl: editingExpForm.companyUrl,
+          location: editingExpForm.location,
+          period: editingExpForm.period,
+          description: editingExpForm.description,
+          technologies: editingExpForm.technologies
+            .split(',')
+            .map((s) => s.trim())
+            .filter(Boolean),
+          order: Number(editingExpForm.order) || 0,
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to update experience');
+      }
+
+      const data = await response.json();
+      setExperiences((current) =>
+        current.map((item) => (item.id === editingExpId ? data.experience : item))
+      );
+      cancelExpEditing();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update experience');
+    }
+  };
+
+  const handleExpDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this experience?')) return;
+
+    setError('');
+
+    try {
+      const response = await fetch(`/api/admin/experiences/${id}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to delete experience');
+      }
+
+      setExperiences((current) => current.filter((item) => item.id !== id));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete experience');
+    }
+  };
+
+  const handleSeedExperiences = async () => {
+    setExpSeedMessage('');
+    setExpSeedLoading(true);
+    setError('');
+
+    try {
+      const response = await fetch('/api/admin/experiences/seed', {
+        method: 'POST',
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to seed experiences');
+      }
+
+      const experiencesResponse = await fetch('/api/admin/experiences', { credentials: 'include' });
+      if (experiencesResponse.ok) {
+        const experiencesData = await experiencesResponse.json();
+        setExperiences(experiencesData.experiences || []);
+      }
+      setExpSeedMessage('Imported experience from CV successfully.');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to seed experiences');
+    } finally {
+      setExpSeedLoading(false);
+    }
+  };
+
+  const handleCvUpload = async (file?: File) => {
+    if (!file) {
+      return;
+    }
+    setUploadingCv(true);
+    setError('');
+
+    try {
+      const url = await uploadImage(file, 'portfolio/cv');
+      setCvUrlSetting(url);
+
+      const response = await fetch('/api/admin/settings', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ cvUrl: url }),
+      });
+
+      if (response.ok) {
+        setSettingsMessage('CV uploaded and saved successfully!');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'CV Upload failed');
+    } finally {
+      setUploadingCv(false);
+    }
+  };
+
   const handleSaveSettings = async (event: FormEvent) => {
     event.preventDefault();
     setError('');
@@ -742,6 +1212,7 @@ export default function AdminDashboard({ adminEmail: _adminEmail }: { adminEmail
           email: settingsEmail,
           currentPassword,
           newPassword,
+          cvUrl: cvUrlSetting,
         }),
       });
 
@@ -753,6 +1224,9 @@ export default function AdminDashboard({ adminEmail: _adminEmail }: { adminEmail
       const data = await response.json();
       setSettingsMessage('Settings updated successfully.');
       setSettingsEmail(String(data.email || settingsEmail));
+      if (data.cvUrl) {
+        setCvUrlSetting(String(data.cvUrl));
+      }
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
@@ -787,6 +1261,7 @@ export default function AdminDashboard({ adminEmail: _adminEmail }: { adminEmail
             { id: 'projects', label: 'Projects' },
             { id: 'skills', label: 'Tech Stack' },
             { id: 'certs', label: 'Certifications' },
+            { id: 'experiences', label: 'Work Experience' },
             { id: 'settings', label: 'Settings' },
           ].map((tab) => (
             <button
@@ -803,21 +1278,25 @@ export default function AdminDashboard({ adminEmail: _adminEmail }: { adminEmail
 
         {activeTab === 'overview' ? (
           <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-            <button
-              type="button"
+            <div
+              role="button"
+              tabIndex={0}
               onClick={() => setActiveTab('overview')}
-              className="bento-card p-6 text-left"
+              onKeyDown={(e) => e.key === 'Enter' && setActiveTab('overview')}
+              className="bento-card p-6 text-left cursor-pointer"
             >
               <p className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground">
                 Total visits
               </p>
               <p className="text-4xl font-bold mt-3">{analyticsTotal}</p>
               <p className="text-xs text-muted-foreground mt-4">Unique per session.</p>
-            </button>
-            <button
-              type="button"
+            </div>
+            <div
+              role="button"
+              tabIndex={0}
               onClick={() => setActiveTab('projects')}
-              className="bento-card p-6 text-left"
+              onKeyDown={(e) => e.key === 'Enter' && setActiveTab('projects')}
+              className="bento-card p-6 text-left cursor-pointer"
             >
               <p className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground">
                 Projects
@@ -825,18 +1304,23 @@ export default function AdminDashboard({ adminEmail: _adminEmail }: { adminEmail
               <p className="text-4xl font-bold mt-3">{projects.length}</p>
               <button
                 type="button"
-                onClick={handleSeedDefaults}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleSeedDefaults();
+                }}
                 disabled={seedLoading}
                 className="mt-4 inline-flex items-center gap-2 text-xs font-mono uppercase tracking-wide px-3 py-2 rounded-full border border-border hover:border-primary transition-colors disabled:opacity-60"
               >
                 {seedLoading ? 'Importing...' : 'Import default projects'}
               </button>
               {seedMessage ? <p className="text-xs text-emerald-400 mt-2">{seedMessage}</p> : null}
-            </button>
-            <button
-              type="button"
+            </div>
+            <div
+              role="button"
+              tabIndex={0}
               onClick={() => setActiveTab('skills')}
-              className="bento-card p-6 text-left"
+              onKeyDown={(e) => e.key === 'Enter' && setActiveTab('skills')}
+              className="bento-card p-6 text-left cursor-pointer"
             >
               <p className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground">
                 Tech stack
@@ -844,7 +1328,10 @@ export default function AdminDashboard({ adminEmail: _adminEmail }: { adminEmail
               <p className="text-4xl font-bold mt-3">{skills.length}</p>
               <button
                 type="button"
-                onClick={handleSeedSkills}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleSeedSkills();
+                }}
                 disabled={skillsSeedLoading}
                 className="mt-4 inline-flex items-center gap-2 text-xs font-mono uppercase tracking-wide px-3 py-2 rounded-full border border-border hover:border-primary transition-colors disabled:opacity-60"
               >
@@ -853,11 +1340,13 @@ export default function AdminDashboard({ adminEmail: _adminEmail }: { adminEmail
               {skillsSeedMessage ? (
                 <p className="text-xs text-emerald-400 mt-2">{skillsSeedMessage}</p>
               ) : null}
-            </button>
-            <button
-              type="button"
+            </div>
+            <div
+              role="button"
+              tabIndex={0}
               onClick={() => setActiveTab('certs')}
-              className="bento-card p-6 text-left"
+              onKeyDown={(e) => e.key === 'Enter' && setActiveTab('certs')}
+              className="bento-card p-6 text-left cursor-pointer"
             >
               <p className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground">
                 Certifications
@@ -865,7 +1354,10 @@ export default function AdminDashboard({ adminEmail: _adminEmail }: { adminEmail
               <p className="text-4xl font-bold mt-3">{certifications.length}</p>
               <button
                 type="button"
-                onClick={handleSeedCertifications}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleSeedCertifications();
+                }}
                 disabled={certSeedLoading}
                 className="mt-4 inline-flex items-center gap-2 text-xs font-mono uppercase tracking-wide px-3 py-2 rounded-full border border-border hover:border-primary transition-colors disabled:opacity-60"
               >
@@ -874,11 +1366,13 @@ export default function AdminDashboard({ adminEmail: _adminEmail }: { adminEmail
               {certSeedMessage ? (
                 <p className="text-xs text-emerald-400 mt-2">{certSeedMessage}</p>
               ) : null}
-            </button>
-            <button
-              type="button"
+            </div>
+            <div
+              role="button"
+              tabIndex={0}
               onClick={() => setActiveTab('projects')}
-              className="bento-card p-6 text-left"
+              onKeyDown={(e) => e.key === 'Enter' && setActiveTab('projects')}
+              className="bento-card p-6 text-left cursor-pointer"
             >
               <p className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground">
                 Top tags
@@ -909,11 +1403,13 @@ export default function AdminDashboard({ adminEmail: _adminEmail }: { adminEmail
               ) : (
                 <p className="text-xs text-muted-foreground mt-4">Add projects to see tag stats.</p>
               )}
-            </button>
-            <button
-              type="button"
+            </div>
+            <div
+              role="button"
+              tabIndex={0}
               onClick={() => setActiveTab('skills')}
-              className="bento-card p-6 text-left"
+              onKeyDown={(e) => e.key === 'Enter' && setActiveTab('skills')}
+              className="bento-card p-6 text-left cursor-pointer"
             >
               <p className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground">
                 Skill averages
@@ -944,7 +1440,7 @@ export default function AdminDashboard({ adminEmail: _adminEmail }: { adminEmail
               ) : (
                 <p className="text-xs text-muted-foreground mt-4">Add skills to see averages.</p>
               )}
-            </button>
+            </div>
           </section>
         ) : null}
 
@@ -1557,59 +2053,291 @@ export default function AdminDashboard({ adminEmail: _adminEmail }: { adminEmail
           </section>
         ) : null}
 
-        {activeTab === 'settings' ? (
-          <section className="bento-card p-6 space-y-6">
-            <div>
-              <h2 className="text-xl font-bold">Account settings</h2>
-              <p className="text-sm text-muted-foreground mt-1">
-                Update your admin email or password.
-              </p>
-            </div>
-            <form onSubmit={handleSaveSettings} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input
-                className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm"
-                placeholder="Admin email"
-                value={settingsEmail}
-                onChange={(event) => setSettingsEmail(event.target.value)}
-              />
-              <input
-                className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm"
-                placeholder="Current password"
-                type="password"
-                value={currentPassword}
-                onChange={(event) => setCurrentPassword(event.target.value)}
-              />
-              <input
-                className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm"
-                placeholder="New password"
-                type="password"
-                value={newPassword}
-                onChange={(event) => setNewPassword(event.target.value)}
-              />
-              <input
-                className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm"
-                placeholder="Confirm new password"
-                type="password"
-                value={confirmPassword}
-                onChange={(event) => setConfirmPassword(event.target.value)}
-              />
-              <div className="md:col-span-2 flex items-center justify-between gap-3 flex-wrap">
-                <p className="text-xs text-muted-foreground">
-                  Leave password fields empty to keep your current password.
-                </p>
-                <button
-                  type="submit"
-                  disabled={settingsLoading}
-                  className="px-5 py-3 rounded-full bg-primary text-primary-foreground text-xs font-mono uppercase tracking-wide disabled:opacity-60"
-                >
-                  {settingsLoading ? 'Saving...' : 'Save settings'}
-                </button>
+        {activeTab === 'experiences' ? (
+          <section className="space-y-6">
+            {expSeedMessage ? <p className="text-xs text-emerald-400 font-mono">{expSeedMessage}</p> : null}
+
+            {/* Add Experience Form */}
+            <form onSubmit={handleExpCreate} className="bento-card p-6 space-y-4">
+              <h3 className="text-lg font-bold">Add New Experience</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input
+                  className="rounded-xl border border-border bg-background px-4 py-3 text-sm"
+                  placeholder="Job Title / Role (e.g. Summer Internship .NET)"
+                  value={expForm.title}
+                  onChange={(event) => updateExpField(setExpForm, 'title', event.target.value)}
+                  required
+                />
+                <input
+                  className="rounded-xl border border-border bg-background px-4 py-3 text-sm"
+                  placeholder="Company / Organization"
+                  value={expForm.company}
+                  onChange={(event) => updateExpField(setExpForm, 'company', event.target.value)}
+                  required
+                />
+                <input
+                  className="rounded-xl border border-border bg-background px-4 py-3 text-sm font-mono"
+                  placeholder="Company Website URL (e.g. https://company.com)"
+                  value={expForm.companyUrl}
+                  onChange={(event) => updateExpField(setExpForm, 'companyUrl', event.target.value)}
+                />
+                <input
+                  className="rounded-xl border border-border bg-background px-4 py-3 text-sm"
+                  placeholder="Location (e.g. Maadi, Egypt)"
+                  value={expForm.location}
+                  onChange={(event) => updateExpField(setExpForm, 'location', event.target.value)}
+                />
+                <DatePeriodPicker
+                  value={expForm.period}
+                  onChange={(newVal) => updateExpField(setExpForm, 'period', newVal)}
+                />
+                <input
+                  className="md:col-span-2 rounded-xl border border-border bg-background px-4 py-3 text-sm font-mono"
+                  placeholder="Technologies (comma separated, e.g. ASP.NET Core, C#, SQL Server)"
+                  value={expForm.technologies}
+                  onChange={(event) => updateExpField(setExpForm, 'technologies', event.target.value)}
+                />
+                <textarea
+                  className="md:col-span-2 rounded-xl border border-border bg-background px-4 py-3 text-sm min-h-[100px]"
+                  placeholder="Description / Responsibilities"
+                  value={expForm.description}
+                  onChange={(event) => updateExpField(setExpForm, 'description', event.target.value)}
+                />
+                <input
+                  className="rounded-xl border border-border bg-background px-4 py-3 text-sm font-mono"
+                  placeholder="Order (e.g. 1)"
+                  value={expForm.order}
+                  onChange={(event) => updateExpField(setExpForm, 'order', event.target.value)}
+                />
               </div>
-              {settingsMessage ? (
-                <p className="md:col-span-2 text-xs text-emerald-400">{settingsMessage}</p>
-              ) : null}
+              <button
+                type="submit"
+                className="px-6 py-3 rounded-full bg-primary text-primary-foreground text-xs font-mono uppercase tracking-wide font-bold"
+              >
+                Add Experience
+              </button>
             </form>
+
+            {/* List Experiences */}
+            <div className="space-y-4">
+              {sortedExperiences.map((exp) => (
+                <div key={exp.id} className="bento-card p-6 space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
+                    <div>
+                      <span className="text-xs font-mono text-primary font-bold">{exp.period}</span>
+                      <h3 className="text-lg font-bold text-foreground">{exp.title}</h3>
+                      <p className="text-xs text-muted-foreground">
+                        {exp.company} {exp.location ? `• ${exp.location}` : ''}
+                      </p>
+                    </div>
+                    <div className="flex gap-2 shrink-0">
+                      <button
+                        onClick={() => startExpEditing(exp)}
+                        className="px-3 py-1.5 rounded-full border border-border text-xs font-mono uppercase tracking-wide hover:border-primary"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleExpDelete(exp.id)}
+                        className="px-3 py-1.5 rounded-full border border-red-400/40 text-xs font-mono uppercase tracking-wide text-red-300 hover:bg-red-400/10"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+
+                  {editingExpId === exp.id ? (
+                    <form onSubmit={handleExpUpdate} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <input
+                        className="rounded-xl border border-border bg-background px-4 py-3 text-sm"
+                        placeholder="Job Title / Role"
+                        value={editingExpForm.title}
+                        onChange={(event) => updateExpField(setEditingExpForm, 'title', event.target.value)}
+                        required
+                      />
+                      <input
+                        className="rounded-xl border border-border bg-background px-4 py-3 text-sm"
+                        placeholder="Company"
+                        value={editingExpForm.company}
+                        onChange={(event) => updateExpField(setEditingExpForm, 'company', event.target.value)}
+                        required
+                      />
+                      <input
+                        className="rounded-xl border border-border bg-background px-4 py-3 text-sm font-mono"
+                        placeholder="Company Website URL (e.g. https://company.com)"
+                        value={editingExpForm.companyUrl}
+                        onChange={(event) => updateExpField(setEditingExpForm, 'companyUrl', event.target.value)}
+                      />
+                      <input
+                        className="rounded-xl border border-border bg-background px-4 py-3 text-sm"
+                        placeholder="Location"
+                        value={editingExpForm.location}
+                        onChange={(event) => updateExpField(setEditingExpForm, 'location', event.target.value)}
+                      />
+                      <DatePeriodPicker
+                        value={editingExpForm.period}
+                        onChange={(newVal) => updateExpField(setEditingExpForm, 'period', newVal)}
+                      />
+                      <input
+                        className="md:col-span-2 rounded-xl border border-border bg-background px-4 py-3 text-sm font-mono"
+                        placeholder="Technologies (comma separated)"
+                        value={editingExpForm.technologies}
+                        onChange={(event) => updateExpField(setEditingExpForm, 'technologies', event.target.value)}
+                      />
+                      <textarea
+                        className="md:col-span-2 rounded-xl border border-border bg-background px-4 py-3 text-sm min-h-[100px]"
+                        placeholder="Description"
+                        value={editingExpForm.description}
+                        onChange={(event) => updateExpField(setEditingExpForm, 'description', event.target.value)}
+                      />
+                      <input
+                        className="rounded-xl border border-border bg-background px-4 py-3 text-sm font-mono"
+                        placeholder="Order"
+                        value={editingExpForm.order}
+                        onChange={(event) => updateExpField(setEditingExpForm, 'order', event.target.value)}
+                      />
+                      <div className="md:col-span-2 flex gap-3">
+                        <button
+                          type="submit"
+                          className="px-5 py-3 rounded-full bg-primary text-primary-foreground text-xs font-mono uppercase tracking-wide font-bold"
+                        >
+                          Update Experience
+                        </button>
+                        <button
+                          type="button"
+                          onClick={cancelExpEditing}
+                          className="px-5 py-3 rounded-full border border-border text-xs font-mono uppercase tracking-wide"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </form>
+                  ) : (
+                    <div>
+                      <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">{exp.description}</p>
+                      {exp.technologies && exp.technologies.length > 0 ? (
+                        <div className="flex flex-wrap gap-1.5 mt-3">
+                          {exp.technologies.map((tech) => (
+                            <span key={tech} className="px-2.5 py-0.5 rounded-full border border-border bg-muted/20 text-[11px] font-mono">
+                              #{tech}
+                            </span>
+                          ))}
+                        </div>
+                      ) : null}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           </section>
+        ) : null}
+
+        {activeTab === 'settings' ? (
+          <div className="space-y-6">
+            {/* CV & Resume Section */}
+            <section className="bento-card p-6 space-y-6">
+              <div>
+                <h2 className="text-xl font-bold">CV / Resume Management</h2>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Upload your CV PDF file or provide a direct link to your CV.
+                </p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="md:col-span-2 space-y-2">
+                  <label className="text-xs font-mono text-muted-foreground uppercase tracking-wider block">
+                    CV File / Link URL
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      className="flex-1 rounded-xl border border-border bg-background px-4 py-3 text-sm font-mono"
+                      placeholder="e.g. /cv.pdf or https://..."
+                      value={cvUrlSetting}
+                      onChange={(event) => setCvUrlSetting(event.target.value)}
+                    />
+                    {cvUrlSetting ? (
+                      <a
+                        href={cvUrlSetting}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-4 py-3 rounded-xl border border-primary/40 text-primary text-xs font-mono uppercase tracking-wide flex items-center justify-center hover:bg-primary/10 transition-colors shrink-0"
+                      >
+                        Preview CV
+                      </a>
+                    ) : null}
+                  </div>
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="flex items-center gap-3 px-4 py-3 rounded-xl border border-dashed border-border bg-background/50 hover:border-primary/50 transition-colors cursor-pointer w-fit">
+                    <span className="text-xs font-mono uppercase tracking-wide text-primary">
+                      {uploadingCv ? 'Uploading CV...' : 'Upload PDF/Doc CV File'}
+                    </span>
+                    <input
+                      type="file"
+                      accept=".pdf,.doc,.docx"
+                      className="hidden"
+                      onChange={(event) => handleCvUpload(event.target.files?.[0])}
+                      disabled={uploadingCv}
+                    />
+                  </label>
+                </div>
+              </div>
+            </section>
+
+            {/* Account Settings Section */}
+            <section className="bento-card p-6 space-y-6">
+              <div>
+                <h2 className="text-xl font-bold">Account settings</h2>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Update your admin email or password.
+                </p>
+              </div>
+              <form onSubmit={handleSaveSettings} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input
+                  className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm"
+                  placeholder="Admin email"
+                  value={settingsEmail}
+                  onChange={(event) => setSettingsEmail(event.target.value)}
+                />
+                <input
+                  className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm"
+                  placeholder="Current password"
+                  type="password"
+                  value={currentPassword}
+                  onChange={(event) => setCurrentPassword(event.target.value)}
+                />
+                <input
+                  className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm"
+                  placeholder="New password"
+                  type="password"
+                  value={newPassword}
+                  onChange={(event) => setNewPassword(event.target.value)}
+                />
+                <input
+                  className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm"
+                  placeholder="Confirm new password"
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(event) => setConfirmPassword(event.target.value)}
+                />
+                <div className="md:col-span-2 flex items-center justify-between gap-3 flex-wrap">
+                  <p className="text-xs text-muted-foreground">
+                    Leave password fields empty to keep your current password.
+                  </p>
+                  <button
+                    type="submit"
+                    disabled={settingsLoading}
+                    className="px-5 py-3 rounded-full bg-primary text-primary-foreground text-xs font-mono uppercase tracking-wide disabled:opacity-60"
+                  >
+                    {settingsLoading ? 'Saving...' : 'Save settings'}
+                  </button>
+                </div>
+                {settingsMessage ? (
+                  <p className="md:col-span-2 text-xs text-emerald-400">{settingsMessage}</p>
+                ) : null}
+              </form>
+            </section>
+          </div>
         ) : null}
       </div>
 

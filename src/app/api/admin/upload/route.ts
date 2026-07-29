@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/auth';
 import cloudinary from '@/lib/cloudinary';
+import fs from 'fs';
+import path from 'path';
 
 async function requireAdmin() {
   const session = await getServerSession(authOptions);
@@ -28,28 +30,40 @@ export async function POST(request: Request) {
 
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
-
     const folder = String(formData.get('folder') || process.env.CLOUDINARY_FOLDER || 'portfolio');
+    const ext = path.extname(file.name).toLowerCase();
 
-    const uploadResult = await new Promise<{ secure_url: string }>((resolve, reject) => {
-      cloudinary.uploader
-        .upload_stream(
-          {
-            folder,
-            resource_type: 'image',
-          },
-          (error, result) => {
-            if (error || !result) {
-              reject(error || new Error('Upload failed'));
-              return;
+    try {
+      const isDoc = ['.doc', '.docx'].includes(ext);
+      const resourceType = isDoc ? 'raw' : 'auto';
+
+      const uploadResult = await new Promise<{ secure_url: string }>((resolve, reject) => {
+        cloudinary.uploader
+          .upload_stream(
+            {
+              folder,
+              resource_type: resourceType,
+            },
+            (error, result) => {
+              if (error || !result) {
+                reject(error || new Error('Upload failed'));
+                return;
+              }
+              resolve({ secure_url: result.secure_url });
             }
-            resolve({ secure_url: result.secure_url });
-          }
-        )
-        .end(buffer);
-    });
+          )
+          .end(buffer);
+      });
 
-    return NextResponse.json({ url: uploadResult.secure_url });
+      return NextResponse.json({ url: uploadResult.secure_url });
+    } catch (_cloudErr) {
+      const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
+      await fs.promises.mkdir(uploadsDir, { recursive: true });
+      const safeFilename = `file-${Date.now()}${ext || '.pdf'}`;
+      const filePath = path.join(uploadsDir, safeFilename);
+      await fs.promises.writeFile(filePath, buffer);
+      return NextResponse.json({ url: `/uploads/${safeFilename}` });
+    }
   } catch (_err) {
     return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
   }

@@ -33,6 +33,103 @@ const contactMethods = [
   },
 ];
 
+function CustomSelect({
+  id,
+  name,
+  value,
+  onChange,
+  error,
+}: {
+  id: string;
+  name: string;
+  value: string;
+  onChange: (val: string) => void;
+  error?: boolean;
+}) {
+  const options = [
+    { value: '', label: 'Select a topic...' },
+    { value: 'backend-api', label: 'Backend API Development' },
+    { value: 'auth-security', label: 'Authentication & Security' },
+    { value: 'database-design', label: 'Database Design' },
+    { value: 'full-consultation', label: 'Full Project Consultation' },
+    { value: 'other', label: 'Other' },
+  ];
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    function onDoc(e: MouseEvent) {
+      if (!ref.current) return;
+      if (!ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener('click', onDoc);
+    return () => document.removeEventListener('click', onDoc);
+  }, []);
+
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') setOpen(false);
+    }
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, []);
+
+  const selected = options.find((o) => o.value === value) || options[0];
+
+  return (
+    <div ref={ref} className="relative w-full">
+      <button
+        type="button"
+        id={id}
+        name={name}
+        aria-controls={`${id}-listbox`}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        onClick={() => setOpen((s) => !s)}
+        onKeyDown={(e) => {
+          if (e.key === 'ArrowDown') setOpen(true);
+        }}
+        className={`w-full relative px-4 pr-10 py-3 bg-input border ${
+          error ? 'border-red-500/50' : 'border-border'
+        } rounded-xl font-mono text-sm text-foreground text-left flex items-center justify-between focus:outline-none cursor-pointer`}
+      >
+        <span className={`truncate ${selected.value === '' ? 'text-muted-foreground/40' : ''}`}>
+          {selected.label}
+        </span>
+        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground">
+          <Icon name="ChevronDownIcon" size={16} />
+        </div>
+      </button>
+
+      {open && (
+        <ul
+          id={`${id}-listbox`}
+          role="listbox"
+          tabIndex={-1}
+          className="absolute left-0 right-0 mt-2 bg-card border border-border rounded-xl p-2 max-h-56 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden z-50 shadow-lg"
+        >
+          {options.map((opt) => (
+            <li
+              key={opt.value}
+              role="option"
+              aria-selected={opt.value === value}
+              onClick={() => {
+                onChange(opt.value);
+                setOpen(false);
+              }}
+              className={`px-3 py-2 rounded-md cursor-pointer font-mono text-sm ${
+                opt.value === value ? 'bg-primary/10 text-primary' : 'text-foreground hover:bg-primary/5'
+              }`}
+            >
+              {opt.label}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
 export default function ContactSection() {
   const [form, setForm] = useState<FormState>(initialForm);
   const [submitted, setSubmitted] = useState(false);
@@ -40,106 +137,13 @@ export default function ContactSection() {
   const [errors, setErrors] = useState<Partial<FormState>>({});
   const [sendError, setSendError] = useState<string | null>(null);
 
-  // Custom select component (inline) - placed here to avoid creating separate file
-  function CustomSelect({
-    id,
-    name,
-    value,
-    onChange,
-    error,
-  }: {
-    id: string;
-    name: string;
-    value: string;
-    onChange: (val: string) => void;
-    error?: boolean;
-  }) {
-    const options = [
-      { value: '', label: 'Select a topic...' },
-      { value: 'backend-api', label: 'Backend API Development' },
-      { value: 'auth-security', label: 'Authentication & Security' },
-      { value: 'database-design', label: 'Database Design' },
-      { value: 'full-consultation', label: 'Full Project Consultation' },
-      { value: 'other', label: 'Other' },
-    ];
-    const [open, setOpen] = useState(false);
-    const ref = useRef<HTMLDivElement | null>(null);
-
-    useEffect(() => {
-      function onDoc(e: MouseEvent) {
-        if (!ref.current) return;
-        if (!ref.current.contains(e.target as Node)) setOpen(false);
-      }
-      document.addEventListener('click', onDoc);
-      return () => document.removeEventListener('click', onDoc);
-    }, []);
-
-    useEffect(() => {
-      function onKey(e: KeyboardEvent) {
-        if (e.key === 'Escape') setOpen(false);
-      }
-      document.addEventListener('keydown', onKey);
-      return () => document.removeEventListener('keydown', onKey);
-    }, []);
-
-    const selected = options.find((o) => o.value === value) || options[0];
-
-    return (
-      <div ref={ref} className={`relative w-full`}>
-        <button
-          type="button"
-          id={id}
-          name={name}
-          aria-controls={`${id}-listbox`}
-          aria-haspopup="listbox"
-          aria-expanded={open}
-          onClick={() => setOpen((s) => !s)}
-          onKeyDown={(e) => {
-            if (e.key === 'ArrowDown') setOpen(true);
-          }}
-          className={`w-full pl-4 pr-10 py-3 bg-input border ${error ? 'border-red-500/50' : 'border-border'} rounded-xl font-mono text-sm text-foreground text-left flex items-center justify-between focus:outline-none`}
-        >
-          <span className={`${selected.value === '' ? 'text-muted-foreground/40' : ''}`}>
-            {selected.label}
-          </span>
-          <Icon name="ChevronDownIcon" size={16} className="text-muted-foreground" />
-        </button>
-
-        {open && (
-          <ul
-            id={`${id}-listbox`}
-            role="listbox"
-            tabIndex={-1}
-            className="absolute left-0 right-0 mt-2 bg-card border border-border rounded-xl p-2 max-h-56 overflow-auto z-50 shadow-lg"
-          >
-            {options.map((opt) => (
-              <li
-                key={opt.value}
-                role="option"
-                aria-selected={opt.value === value}
-                onClick={() => {
-                  onChange(opt.value);
-                  setOpen(false);
-                }}
-                className={`px-3 py-2 rounded-md cursor-pointer font-mono text-sm ${opt.value === value ? 'bg-primary/10 text-primary' : 'text-foreground hover:bg-primary/5'}`}
-              >
-                {opt.label}
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-    );
-  }
-
   const validate = (): boolean => {
     const newErrors: Partial<FormState> = {};
     if (!form.name.trim()) newErrors.name = 'Name is required';
     if (!form.email.trim() || !/\S+@\S+\.\S+/.test(form.email))
       newErrors.email = 'Valid email required';
     if (!form.subject.trim()) newErrors.subject = 'Subject is required';
-    if (!form.message.trim() || form.message.length < 20)
-      newErrors.message = 'Message must be at least 20 characters';
+    if (!form.message.trim()) newErrors.message = 'Message is required';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };

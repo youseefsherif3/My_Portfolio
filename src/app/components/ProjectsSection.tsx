@@ -78,6 +78,7 @@ export default function ProjectsSection() {
           if (entry.isIntersecting) {
             entry.target.classList.add('opacity-100', 'translate-y-0');
             entry.target.classList.remove('opacity-0', 'translate-y-8');
+            observer.unobserve(entry.target);
           }
         });
       },

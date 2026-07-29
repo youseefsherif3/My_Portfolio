@@ -55,7 +55,7 @@ function buildCategories(skills: SkillRecord[]): SkillCategory[] {
   }));
 }
 
-function SkillBar({ name, level, index }: { name: string; level: number; index: number }) {
+function SkillBar({ name, level }: { name: string; level: number }) {
   const barRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -63,20 +63,16 @@ function SkillBar({ name, level, index }: { name: string; level: number; index: 
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting && barRef.current) {
-            setTimeout(() => {
-              if (barRef.current) {
-                barRef.current.style.width = `${level}%`;
-              }
-            }, index * 80);
+            barRef.current.style.width = `${level}%`;
           }
         });
       },
-      { threshold: 0.5 }
+      { threshold: 0.2 }
     );
 
     if (barRef.current) observer.observe(barRef.current);
     return () => observer.disconnect();
-  }, [level, index]);
+  }, [level]);
 
   return (
     <div className="flex items-center gap-3">
@@ -88,8 +84,8 @@ function SkillBar({ name, level, index }: { name: string; level: number; index: 
         <div className="h-0.5 bg-border rounded-full overflow-hidden">
           <div
             ref={barRef}
-            className="progress-bar h-full transition-all duration-700"
-            style={{ width: '0%', transitionDelay: `${index * 80}ms` }}
+            className="progress-bar h-full transition-all duration-700 ease-out"
+            style={{ width: '0%' }}
           />
         </div>
       </div>
@@ -191,6 +187,7 @@ export default function SkillsSection() {
           if (entry.isIntersecting) {
             entry.target.classList.add('opacity-100', 'translate-y-0');
             entry.target.classList.remove('opacity-0', 'translate-y-8');
+            observer.unobserve(entry.target);
           }
         });
       },
@@ -262,12 +259,11 @@ export default function SkillsSection() {
               </div>
 
               <div className="flex flex-col gap-3.5">
-                {category.skills.map((skill, skillIndex) => (
+                {category.skills.map((skill) => (
                   <SkillBar
                     key={skill.name}
                     name={skill.name}
                     level={skill.level}
-                    index={skillIndex + catIndex * 5}
                   />
                 ))}
               </div>

@@ -13,19 +13,20 @@ async function requireAdmin() {
   return session;
 }
 
-export async function PATCH(request: Request, { params }: { params: { id: string } }) {
+export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await requireAdmin();
   if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
+    const { id } = await params;
     const body = await request.json();
 
     await connectToDatabase();
 
     const updated = await Certification.findByIdAndUpdate(
-      params.id,
+      id,
       {
         title: String(body.title || '').trim(),
         issuer: String(body.issuer || '').trim(),
@@ -57,21 +58,22 @@ export async function PATCH(request: Request, { params }: { params: { id: string
   }
 }
 
-export async function DELETE(_request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await requireAdmin();
   if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
+    const { id } = await params;
     await connectToDatabase();
-    const deleted = await Certification.findByIdAndDelete(params.id);
+    const deleted = await Certification.findByIdAndDelete(id).lean<CertificationDocument>();
 
     if (!deleted) {
       return NextResponse.json({ error: 'Certification not found' }, { status: 404 });
     }
 
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true, id });
   } catch (_err) {
     return NextResponse.json({ error: 'Failed to delete certification' }, { status: 500 });
   }

@@ -9,40 +9,54 @@ export default function CursorGlow() {
     const glow = glowRef.current;
     if (!glow) return;
 
-    let rafId: number;
-    let targetX = 0;
-    let targetY = 0;
-    let currentX = 0;
-    let currentY = 0;
+    let rafId: number | null = null;
+    let targetX = -1000;
+    let targetY = -1000;
+    let currentX = -1000;
+    let currentY = -1000;
+    let isMoving = false;
+
+    const animate = () => {
+      const dx = targetX - currentX;
+      const dy = targetY - currentY;
+
+      currentX += dx * 0.1;
+      currentY += dy * 0.1;
+
+      if (glow) {
+        glow.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) translate(-50%, -50%)`;
+      }
+
+      if (Math.abs(dx) > 0.1 || Math.abs(dy) > 0.1) {
+        rafId = requestAnimationFrame(animate);
+      } else {
+        isMoving = false;
+        rafId = null;
+      }
+    };
 
     const handleMouseMove = (e: MouseEvent) => {
       targetX = e.clientX;
       targetY = e.clientY;
-    };
 
-    const animate = () => {
-      currentX += (targetX - currentX) * 0.08;
-      currentY += (targetY - currentY) * 0.08;
-
-      if (glow) {
-        glow.style.transform = `translate(${currentX}px, ${currentY}px) translate(-50%, -50%)`;
+      if (!isMoving) {
+        isMoving = true;
+        rafId = requestAnimationFrame(animate);
       }
-      rafId = requestAnimationFrame(animate);
     };
 
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
-    rafId = requestAnimationFrame(animate);
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
-      cancelAnimationFrame(rafId);
+      if (rafId !== null) cancelAnimationFrame(rafId);
     };
   }, []);
 
   return (
     <div
       ref={glowRef}
-      className="cursor-glow fixed top-0 left-0 w-[700px] h-[700px] rounded-full z-[1] pointer-events-none"
+      className="cursor-glow fixed top-0 left-0 w-[500px] h-[500px] rounded-full z-[1] pointer-events-none will-change-transform"
       aria-hidden="true"
     />
   );

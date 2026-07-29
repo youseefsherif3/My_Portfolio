@@ -8,7 +8,7 @@ const navLinks = [
   { label: 'About', href: '#about' },
   { label: 'Projects', href: '#projects' },
   { label: 'Skills', href: '#skills' },
-  { label: 'Blog', href: '#blog' },
+  { label: 'Experience', href: '#experience' },
   { label: 'Contact', href: '#contact' },
 ];
 
@@ -19,16 +19,25 @@ export default function Header() {
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 60);
+    let ticking = false;
 
-      const sections = navLinks.map((l) => l.href.replace('#', ''));
-      for (const id of sections.reverse()) {
-        const el = document.getElementById(id);
-        if (el && window.scrollY >= el.offsetTop - 120) {
-          setActiveSection(id);
-          break;
-        }
+    const handleScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const isScrolled = window.scrollY > 60;
+          setScrolled((prev) => (prev !== isScrolled ? isScrolled : prev));
+
+          const sections = navLinks.map((l) => l.href.replace('#', ''));
+          for (const id of sections.reverse()) {
+            const el = document.getElementById(id);
+            if (el && window.scrollY >= el.offsetTop - 120) {
+              setActiveSection((prev) => (prev !== id ? id : prev));
+              break;
+            }
+          }
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 

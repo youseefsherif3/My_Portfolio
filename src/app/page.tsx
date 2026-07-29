@@ -4,7 +4,7 @@ import Footer from '@/components/Footer';
 import HeroSection from '@/app/components/HeroSection';
 import ProjectsSection from '@/app/components/ProjectsSection';
 import SkillsSection from '@/app/components/SkillsSection';
-import BlogSection from '@/app/components/BlogSection';
+import ExperienceSection from '@/app/components/ExperienceSection';
 import ContactSection from '@/app/components/ContactSection';
 import CursorGlow from '@/app/components/CursorGlow';
 import VisitorTracker from '@/app/components/VisitorTracker';
@@ -27,8 +27,8 @@ export default function HomePage() {
         <SkillsSection />
       </section>
 
-      <section id="blog" className="scroll-mt-20">
-        <BlogSection />
+      <section id="experience" className="scroll-mt-20">
+        <ExperienceSection />
       </section>
 
       <section id="contact" className="scroll-mt-20">
