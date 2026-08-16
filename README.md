@@ -144,7 +144,7 @@ npm run build
 
 ## 🌍 Live Website
 
-https://youseef-sherif-portfolio.vercel.app
+https://www.youseefsherifdeveloper.dev
 
 ---
 
@@ -155,7 +155,7 @@ https://youseef-sherif-portfolio.vercel.app
 Backend-Focused Full Stack Developer
 
 * GitHub: https://github.com/youseefsherif3
-* Portfolio: https://youseef-sherif-portfolio.vercel.app
+* Portfolio: https://www.youseefsherifdeveloper.dev
 * LinkedIn: https://www.linkedin.com/in/youseef-sherif/
 
 ---
