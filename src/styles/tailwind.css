@@ -62,21 +62,70 @@
     color: var(--primary-foreground);
   }
 
+  /* Ultra-Sleek Inset Floating Scrollbar (Never protrudes outside rounded borders) */
   ::-webkit-scrollbar {
-    width: 5px;
+    width: 8px;
+    height: 8px;
   }
 
   ::-webkit-scrollbar-track {
-    background: var(--background);
+    background: transparent;
+    margin: 4px;
   }
 
   ::-webkit-scrollbar-thumb {
-    background: var(--border);
-    border-radius: 3px;
+    background-color: #1E2D3D;
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+    transition: background-color 0.2s ease;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--primary);
+    background-color: #0ECFCF;
+  }
+
+  ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
+  /* Firefox Custom Thin Scrollbar */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #1E2D3D transparent;
+  }
+
+  /* Fix browser autofill and inputs dark theme override */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active,
+  textarea:-webkit-autofill,
+  textarea:-webkit-autofill:hover,
+  textarea:-webkit-autofill:focus,
+  textarea:-webkit-autofill:active,
+  select:-webkit-autofill,
+  select:-webkit-autofill:hover,
+  select:-webkit-autofill:focus,
+  select:-webkit-autofill:active {
+    -webkit-text-fill-color: #E2E8F0 !important;
+    -webkit-box-shadow: 0 0 0px 1000px #1A2535 inset !important;
+    box-shadow: 0 0 0px 1000px #1A2535 inset !important;
+    transition: background-color 5000s ease-in-out 0s !important;
+    caret-color: #0ECFCF !important;
+    font-family: inherit !important;
+  }
+
+  /* Admin specific autofill inputs */
+  .admin-shell input:-webkit-autofill,
+  .admin-shell input:-webkit-autofill:hover,
+  .admin-shell input:-webkit-autofill:focus,
+  .admin-shell textarea:-webkit-autofill,
+  .admin-shell select:-webkit-autofill {
+    -webkit-text-fill-color: #E2E8F0 !important;
+    -webkit-box-shadow: 0 0 0px 1000px #080C10 inset !important;
+    box-shadow: 0 0 0px 1000px #080C10 inset !important;
+    caret-color: #0ECFCF !important;
   }
 }
 
@@ -106,9 +155,9 @@
     pointer-events: none;
     z-index: 9999;
     opacity: 0.025;
-    transform: translateZ(0);
-    backface-visibility: hidden;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    contain: strict;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 0);
+    background-size: 24px 24px;
   }
 
   .glass-card {

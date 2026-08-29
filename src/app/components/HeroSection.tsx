@@ -30,14 +30,14 @@ export default function HeroSection() {
   const heroRef = useRef<HTMLElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
   const [visibleLines, setVisibleLines] = useState(0);
-  const [cvUrl, setCvUrl] = useState('/cv.pdf');
+  const [cvUrl, setCvUrl] = useState('/api/cv');
   const [showCvModal, setShowCvModal] = useState(false);
 
   useEffect(() => {
     fetch('/api/settings')
       .then((res) => res.json())
       .then((data) => {
-        if (data?.cvUrl) setCvUrl(data.cvUrl);
+        if (data?.cvUrl) setCvUrl('/api/cv');
       })
       .catch(() => {});
   }, []);
@@ -69,34 +69,45 @@ export default function HeroSection() {
     const buttons = document.querySelectorAll('.magnetic-btn');
     const handlers: Array<{ el: Element; move: (e: MouseEvent) => void; leave: () => void }> = [];
 
-    buttons.forEach((btn) => {
-      const move = (e: MouseEvent) => {
-        const rect = btn.getBoundingClientRect();
-        const x = e.clientX - rect.left - rect.width / 2;
-        const y = e.clientY - rect.top - rect.height / 2;
-        (btn as HTMLElement).style.transform = `translate(${x * 0.25}px, ${y * 0.25}px)`;
-      };
-      const leave = () => {
-        (btn as HTMLElement).style.transform = 'translate(0, 0)';
-        (btn as HTMLElement).style.transition = 'transform 0.5s cubic-bezier(0.23, 1, 0.32, 1)';
-      };
-      btn.addEventListener('mousemove', move as EventListener);
-      btn.addEventListener('mouseleave', leave);
-      handlers.push({ el: btn, move: move as (e: MouseEvent) => void, leave });
-    });
+    // Only apply magnetic hover shift on desktop devices with mouse pointers
+    if (window.matchMedia('(pointer: fine)').matches) {
+      buttons.forEach((btn) => {
+        const move = (e: MouseEvent) => {
+          const rect = btn.getBoundingClientRect();
+          const x = e.clientX - rect.left - rect.width / 2;
+          const y = e.clientY - rect.top - rect.height / 2;
+          (btn as HTMLElement).style.transform = `translate(${x * 0.25}px, ${y * 0.25}px)`;
+        };
+        const leave = () => {
+          (btn as HTMLElement).style.transform = 'translate(0, 0)';
+          (btn as HTMLElement).style.transition = 'transform 0.5s cubic-bezier(0.23, 1, 0.32, 1)';
+        };
+        btn.addEventListener('mousemove', move as EventListener);
+        btn.addEventListener('mouseleave', leave);
+        handlers.push({ el: btn, move: move as (e: MouseEvent) => void, leave });
+      });
+    }
 
+    let scrollRafId: number | null = null;
     const handleScroll = () => {
-      if (textRef.current) {
-        const scrollY = window.scrollY;
-        textRef.current.style.transform = `translateY(${scrollY * 0.15}px)`;
-        textRef.current.style.opacity = `${1 - scrollY / 600}`;
-      }
+      if (scrollRafId !== null) return;
+      scrollRafId = requestAnimationFrame(() => {
+        if (textRef.current) {
+          const scrollY = window.scrollY;
+          if (scrollY < 800) {
+            textRef.current.style.transform = `translateY(${scrollY * 0.12}px)`;
+            textRef.current.style.opacity = `${Math.max(0, 1 - scrollY / 600)}`;
+          }
+        }
+        scrollRafId = null;
+      });
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
 
     return () => {
       clearInterval(interval);
+      if (scrollRafId !== null) cancelAnimationFrame(scrollRafId);
       handlers.forEach(({ el, move, leave }) => {
         el.removeEventListener('mousemove', move as EventListener);
         el.removeEventListener('mouseleave', leave);
@@ -107,6 +118,16 @@ export default function HeroSection() {
 
   const scrollToProjects = () => {
     document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleOpenCv = () => {
+    // Detect mobile device
+    const isMobileDevice = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (isMobileDevice) {
+      window.open(cvUrl, '_blank');
+    } else {
+      setShowCvModal(true);
+    }
   };
 
   return (
@@ -168,7 +189,7 @@ export default function HeroSection() {
               </button>
               <button
                 type="button"
-                onClick={() => setShowCvModal(true)}
+                onClick={handleOpenCv}
                 className="magnetic-btn w-full sm:w-auto flex items-center justify-center gap-4 sm:gap-5 px-6 sm:px-8 py-3 sm:py-4 border border-border text-foreground rounded-full font-bold text-xs sm:text-sm tracking-wide hover:border-primary/40 hover:text-primary transition-all duration-300 cursor-pointer group"
               >
                 <Icon name="DocumentTextIcon" size={18} className="text-primary mr-1.5 sm:mr-2 transition-transform duration-300 group-hover:scale-110 shrink-0" />
@@ -284,25 +305,51 @@ export default function HeroSection() {
                   <h3 className="text-lg font-bold text-foreground">Youseef Sherif</h3>
                   <p className="text-[12px] text-muted-foreground mt-0.5">CV / Resume</p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setShowCvModal(false)}
-                  className="text-muted-foreground bg-transparent border border-transparent px-3 py-1 rounded-md hover:text-primary transition-colors cursor-pointer"
-                >
-                  Close
-                </button>
+                <div className="flex items-center gap-3">
+                  <a
+                    href={cvUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-2 bg-primary text-primary-foreground font-mono text-xs font-bold rounded-xl flex items-center gap-2 transition hover:opacity-90"
+                  >
+                    <Icon name="ArrowDownTrayIcon" size={14} />
+                    <span>Open / Download PDF</span>
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => setShowCvModal(false)}
+                    className="text-muted-foreground bg-transparent border border-transparent px-3 py-1.5 rounded-md hover:text-primary transition-colors cursor-pointer text-xs font-mono"
+                  >
+                    Close
+                  </button>
+                </div>
               </div>
 
               <div className="w-full flex items-center justify-center">
                 <div className="w-full bg-[#0b1116] rounded-lg overflow-hidden flex items-center justify-center h-[72vh]">
                   {cvUrl ? (
-                    <iframe
-                      src={`${cvUrl}#toolbar=0&navpanes=0&scrollbar=0`}
-                      className="w-full h-full border-0"
-                      title="CV Preview"
-                    />
+                    <object
+                      data={cvUrl}
+                      type="application/pdf"
+                      className="w-full h-full"
+                    >
+                      <div className="flex flex-col items-center justify-center p-8 text-center space-y-4">
+                        <Icon name="DocumentTextIcon" size={48} className="text-primary" />
+                        <p className="text-sm text-foreground font-mono">
+                          Viewing PDF requires opening in full window.
+                        </p>
+                        <a
+                          href={cvUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-6 py-3 bg-primary text-primary-foreground font-bold font-mono text-xs rounded-xl"
+                        >
+                          Open CV PDF Document
+                        </a>
+                      </div>
+                    </object>
                   ) : (
-                    <div className="text-muted-foreground">No CV document available.</div>
+                    <div className="text-muted-foreground font-mono text-xs">No CV document available.</div>
                   )}
                 </div>
               </div>

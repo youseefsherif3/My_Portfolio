@@ -1,12 +1,13 @@
 import { MetadataRoute } from 'next';
 
 export default function robots(): MetadataRoute.Robots {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.youseefsherifdeveloper.dev';
   return {
     rules: {
       userAgent: '*',
       allow: '/',
       disallow: ['/api/', '/_next/', '/admin/'],
     },
-    sitemap: 'http://localhost:3000/sitemap.xml',
+    sitemap: `${siteUrl}/sitemap.xml`,
   };
 }

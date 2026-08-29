@@ -24,11 +24,11 @@ const fallbackProjects: Project[] = defaultProjects.map((project, index) => ({
 }));
 
 export default function ProjectsSection() {
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [projects, setProjects] = useState<Project[]>(fallbackProjects);
   const [activeFilter, setActiveFilter] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
-  const [visibleProjects, setVisibleProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [visibleProjects, setVisibleProjects] = useState<Project[]>(fallbackProjects);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const sectionRef = useRef<HTMLDivElement>(null);
 

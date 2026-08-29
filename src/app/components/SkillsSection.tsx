@@ -95,8 +95,20 @@ function SkillBar({ name, level }: { name: string; level: number }) {
 
 export default function SkillsSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const [skills, setSkills] = useState<SkillRecord[]>([]);
-  const [certifications, setCertifications] = useState<CertificationRecord[]>([]);
+  const [skills, setSkills] = useState<SkillRecord[]>(
+    defaultSkills.map((skill, index) => ({
+      id: String(index + 1),
+      ...skill,
+      order: skill.order ?? 0,
+    }))
+  );
+  const [certifications, setCertifications] = useState<CertificationRecord[]>(
+    defaultCertifications.map((cert, index) => ({
+      id: String(index + 1),
+      ...cert,
+      order: cert.order ?? 0,
+    }))
+  );
   const [showCertModal, setShowCertModal] = useState(false);
   const [certFiles, setCertFiles] = useState<Array<{ name: string; url: string }>>([]);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);

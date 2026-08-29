@@ -7,7 +7,7 @@ export default function CursorGlow() {
 
   useEffect(() => {
     const glow = glowRef.current;
-    if (!glow) return;
+    if (!glow || !window.matchMedia('(pointer: fine)').matches) return;
 
     let rafId: number | null = null;
     let targetX = -1000;

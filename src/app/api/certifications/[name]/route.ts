@@ -2,9 +2,9 @@ import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 
-export async function GET(request: Request, { params }: { params: { name: string } }) {
+export async function GET(request: Request, { params }: { params: Promise<{ name: string }> }) {
   try {
-    const name = params.name;
+    const { name } = await params;
     const certDir = path.join(process.cwd(), 'certifications');
     const filePath = path.join(certDir, decodeURIComponent(name));
 

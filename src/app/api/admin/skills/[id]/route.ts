@@ -6,26 +6,26 @@ import { Skill, type SkillDocument } from '@/lib/models/Skill';
 
 async function requireAdmin() {
   const session = await getServerSession(authOptions);
-  const isAdmin = Boolean((session?.user as { admin?: boolean } | undefined)?.admin);
-  if (!isAdmin) {
+  if (!session?.user?.email) {
     return null;
   }
   return session;
 }
 
-export async function PATCH(request: Request, { params }: { params: { id: string } }) {
+export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await requireAdmin();
   if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
+    const { id } = await params;
     const body = await request.json();
 
     await connectToDatabase();
 
     const updated = await Skill.findByIdAndUpdate(
-      params.id,
+      id,
       {
         name: String(body.name || '').trim(),
         category: String(body.category || '').trim(),
@@ -55,15 +55,16 @@ export async function PATCH(request: Request, { params }: { params: { id: string
   }
 }
 
-export async function DELETE(_request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await requireAdmin();
   if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
+    const { id } = await params;
     await connectToDatabase();
-    const deleted = await Skill.findByIdAndDelete(params.id);
+    const deleted = await Skill.findByIdAndDelete(id);
 
     if (!deleted) {
       return NextResponse.json({ error: 'Skill not found' }, { status: 404 });
