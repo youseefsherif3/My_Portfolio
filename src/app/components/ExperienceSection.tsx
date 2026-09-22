@@ -35,21 +35,20 @@ const defaultExperiences: ExperienceItem[] = [
   },
 ];
 
-export default function ExperienceSection() {
-  const [experiences, setExperiences] = useState<ExperienceItem[]>(defaultExperiences);
-  const [loading, setLoading] = useState(true);
+export interface ExperienceSectionProps {
+  initialExperiences?: ExperienceItem[];
+}
+
+export default function ExperienceSection({ initialExperiences }: ExperienceSectionProps) {
+  const [experiences, setExperiences] = useState<ExperienceItem[]>(
+    initialExperiences && initialExperiences.length > 0 ? initialExperiences : defaultExperiences
+  );
 
   useEffect(() => {
-    fetch('/api/experiences')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data?.experiences && Array.isArray(data.experiences) && data.experiences.length > 0) {
-          setExperiences(data.experiences);
-        }
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
+    if (initialExperiences && initialExperiences.length > 0) {
+      setExperiences(initialExperiences);
+    }
+  }, [initialExperiences]);
 
   return (
     <section id="experience" className="py-20 sm:py-28 px-4 sm:px-6 relative overflow-hidden">
@@ -77,12 +76,7 @@ export default function ExperienceSection() {
         </div>
 
         {/* Timeline Content */}
-        {loading ? (
-          <div className="flex justify-center items-center py-12">
-            <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-          </div>
-        ) : (
-          <div className="relative pl-4 sm:pl-8 border-l border-primary/20 space-y-10 sm:space-y-12">
+        <div className="relative pl-4 sm:pl-8 border-l border-primary/20 space-y-10 sm:space-y-12">
             {experiences.map((exp, index) => {
               const companyLink = formatUrl(exp.companyUrl);
               return (
@@ -165,7 +159,6 @@ export default function ExperienceSection() {
             );
           })}
         </div>
-        )}
       </div>
     </section>
   );

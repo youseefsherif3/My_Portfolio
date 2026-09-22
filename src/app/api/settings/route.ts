@@ -1,16 +1,12 @@
 import { NextResponse } from 'next/server';
-import { connectToDatabase } from '@/lib/mongodb';
-import { SiteSettings, type SiteSettingsDocument } from '@/lib/models/SiteSettings';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/auth';
 
 export async function GET() {
-  try {
-    await connectToDatabase();
-    const settings = await SiteSettings.findOne({ key: 'main' }).lean<SiteSettingsDocument>();
-
-    return NextResponse.json({
-      cvUrl: settings?.cvUrl || '/cv.pdf',
-    });
-  } catch (_err) {
-    return NextResponse.json({ cvUrl: '/cv.pdf' });
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.email) {
+    return NextResponse.json({ error: 'Unauthorized. Admin access required.' }, { status: 401 });
   }
+
+  return NextResponse.json({ message: 'Use /api/admin/settings' }, { status: 403 });
 }

@@ -8,8 +8,13 @@ import ExperienceSection from '@/app/components/ExperienceSection';
 import ContactSection from '@/app/components/ContactSection';
 import CursorGlow from '@/app/components/CursorGlow';
 import VisitorTracker from '@/app/components/VisitorTracker';
+import { getPortfolioServerData } from '@/lib/serverData';
 
-export default function HomePage() {
+export const dynamic = 'force-dynamic';
+
+export default async function HomePage() {
+  const { projects, skills, certifications, experiences } = await getPortfolioServerData();
+
   return (
     <main className="relative bg-background min-h-screen">
       <div className="grain-overlay" aria-hidden="true" />
@@ -20,15 +25,15 @@ export default function HomePage() {
       <HeroSection />
 
       <section id="projects" className="scroll-mt-20">
-        <ProjectsSection />
+        <ProjectsSection initialProjects={projects} />
       </section>
 
       <section id="skills" className="scroll-mt-20">
-        <SkillsSection />
+        <SkillsSection initialSkills={skills} initialCertifications={certifications} />
       </section>
 
       <section id="experience" className="scroll-mt-20">
-        <ExperienceSection />
+        <ExperienceSection initialExperiences={experiences} />
       </section>
 
       <section id="contact" className="scroll-mt-20">

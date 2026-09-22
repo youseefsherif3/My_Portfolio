@@ -115,41 +115,32 @@ export async function POST(request: Request) {
 </head>
 <body style="margin: 0; padding: 0; background-color: #080C10; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; color: #E2E8F0;">
   
-  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #080C10; width: 100%; padding: 40px 16px;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #080C10; width: 100%; padding: 24px 8px;">
     <tr>
       <td align="center">
         
         <!-- Main Card Container -->
-        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width: 620px; background-color: #0F1923; border: 1px solid #1E2D3D; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);">
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width: 560px; width: 100%; background-color: #0F1923; border: 1px solid #1E2D3D; border-radius: 16px; overflow: hidden; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);">
           
           <!-- Top Header Bar -->
           <tr>
-            <td style="padding: 24px 32px; background-color: #131D28; border-bottom: 1px solid #1E2D3D;">
+            <td style="padding: 20px 20px; background-color: #131D28; border-bottom: 1px solid #1E2D3D;">
               <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                 <tr>
-                  <td valign="middle">
-                    <table role="presentation" cellspacing="0" cellpadding="0" border="0">
-                      <tr>
-                        <td style="width: 36px; height: 36px; background-color: rgba(14, 207, 207, 0.12); border: 1px solid rgba(14, 207, 207, 0.35); border-radius: 10px; text-align: center; vertical-align: middle;">
-                          <span style="font-family: 'JetBrains Mono', monospace, Consolas, sans-serif; font-weight: 800; font-size: 15px; color: #0ECFCF; line-height: 36px; display: inline-block;">
-                            &gt;_
-                          </span>
-                        </td>
-                        <td style="padding-left: 12px;">
-                          <div style="font-size: 16px; font-weight: 700; color: #FFFFFF; letter-spacing: -0.3px; line-height: 1.2;">
-                            Youseef Sherif
-                          </div>
-                          <div style="font-size: 11px; font-family: 'JetBrains Mono', monospace, Consolas, sans-serif; color: #0ECFCF; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; margin-top: 2px;">
-                            Backend Software Engineer
-                          </div>
-                        </td>
-                      </tr>
-                    </table>
+                  <td valign="middle" style="width: 38px;">
+                    <div style="width: 36px; height: 36px; background-color: rgba(14, 207, 207, 0.12); border: 1px solid rgba(14, 207, 207, 0.35); border-radius: 10px; text-align: center; line-height: 36px;">
+                      <span style="font-family: 'JetBrains Mono', monospace, Consolas, sans-serif; font-weight: 800; font-size: 15px; color: #0ECFCF;">
+                        &gt;_
+                      </span>
+                    </div>
                   </td>
-                  <td align="right" valign="middle">
-                    <span style="display: inline-block; padding: 5px 12px; background-color: rgba(14, 207, 207, 0.1); border: 1px solid rgba(14, 207, 207, 0.3); border-radius: 20px; color: #0ECFCF; font-size: 11px; font-family: 'JetBrains Mono', monospace, Consolas, sans-serif; font-weight: 700;">
-                      ${topicTitle}
-                    </span>
+                  <td valign="middle" style="padding-left: 12px;">
+                    <div style="font-size: 15px; font-weight: 700; color: #FFFFFF; letter-spacing: -0.3px; line-height: 1.2;">
+                      Youseef Sherif
+                    </div>
+                    <div style="font-size: 10px; font-family: 'JetBrains Mono', monospace, Consolas, sans-serif; color: #0ECFCF; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 3px;">
+                      Backend Software Engineer
+                    </div>
                   </td>
                 </tr>
               </table>
@@ -158,10 +149,17 @@ export async function POST(request: Request) {
 
           <!-- Message Body Content -->
           <tr>
-            <td style="padding: 36px 32px 28px 32px;">
+            <td style="padding: 24px 20px;">
+              
+              <!-- Topic Badge -->
+              <div style="margin-bottom: 18px;">
+                <span style="display: inline-block; padding: 4px 10px; background-color: rgba(14, 207, 207, 0.1); border: 1px solid rgba(14, 207, 207, 0.3); border-radius: 20px; color: #0ECFCF; font-size: 11px; font-family: 'JetBrains Mono', monospace, Consolas, sans-serif; font-weight: 700;">
+                  ${topicTitle}
+                </span>
+              </div>
               
               <!-- Greeting -->
-              <p style="margin: 0 0 18px 0; font-size: 15px; color: #94A3B8; font-weight: 500; line-height: 1.5;">
+              <p style="margin: 0 0 16px 0; font-size: 15px; color: #94A3B8; font-weight: 500; line-height: 1.5;">
                 Hello <strong style="color: #FFFFFF; font-weight: 700;">${msg.name}</strong>,
               </p>
               

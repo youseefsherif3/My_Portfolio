@@ -67,42 +67,37 @@ async function sendLoginNotification(
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>${emailSubject}</title>
+  <style>
+    body, table, td, p, a, span { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; word-break: break-word; }
+    table { border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+  </style>
 </head>
 <body style="margin: 0; padding: 0; background-color: #080C10; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #E2E8F0;">
-  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #080C10; width: 100%; padding: 40px 16px;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #080C10; width: 100%; padding: 24px 8px;">
     <tr>
       <td align="center">
         <!-- Main Card Container -->
-        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width: 600px; background-color: #0F1923; border: 1px solid #1E2D3D; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);">
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width: 540px; width: 100%; background-color: #0F1923; border: 1px solid #1E2D3D; border-radius: 16px; overflow: hidden; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);">
           
           <!-- Top Header Bar -->
           <tr>
-            <td style="padding: 24px 32px; background-color: #131D28; border-bottom: 1px solid #1E2D3D;">
+            <td style="padding: 20px 20px; background-color: #131D28; border-bottom: 1px solid #1E2D3D;">
               <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                 <tr>
-                  <td valign="middle">
-                    <table role="presentation" cellspacing="0" cellpadding="0" border="0">
-                      <tr>
-                        <td style="width: 36px; height: 36px; background-color: rgba(14, 207, 207, 0.12); border: 1px solid rgba(14, 207, 207, 0.35); border-radius: 10px; text-align: center; vertical-align: middle;">
-                          <span style="font-family: 'JetBrains Mono', monospace, Consolas, sans-serif; font-weight: 800; font-size: 15px; color: #0ECFCF; line-height: 36px; display: inline-block;">
-                            &gt;_
-                          </span>
-                        </td>
-                        <td style="padding-left: 12px;">
-                          <div style="font-size: 16px; font-weight: 700; color: #FFFFFF; letter-spacing: -0.3px;">
-                            Youseef Sherif Portfolio
-                          </div>
-                          <div style="font-size: 11px; font-family: 'JetBrains Mono', monospace, Consolas, sans-serif; color: #64748B; text-transform: uppercase; letter-spacing: 0.8px; margin-top: 2px;">
-                            Security &amp; Access Control System
-                          </div>
-                        </td>
-                      </tr>
-                    </table>
+                  <td valign="middle" style="width: 38px;">
+                    <div style="width: 36px; height: 36px; background-color: rgba(14, 207, 207, 0.12); border: 1px solid rgba(14, 207, 207, 0.35); border-radius: 10px; text-align: center; line-height: 36px;">
+                      <span style="font-family: 'JetBrains Mono', monospace, Consolas, sans-serif; font-weight: 800; font-size: 15px; color: #0ECFCF;">
+                        &gt;_
+                      </span>
+                    </div>
                   </td>
-                  <td align="right" valign="middle">
-                    <span style="display: inline-block; padding: 4px 12px; background-color: rgba(14, 207, 207, 0.1); border: 1px solid rgba(14, 207, 207, 0.3); border-radius: 20px; color: #0ECFCF; font-size: 11px; font-family: 'JetBrains Mono', monospace, Consolas, sans-serif; font-weight: 700;">
-                      🔒 AUTHENTICATED
-                    </span>
+                  <td valign="middle" style="padding-left: 12px;">
+                    <div style="font-size: 15px; font-weight: 700; color: #FFFFFF; letter-spacing: -0.3px; line-height: 1.2;">
+                      Youseef Sherif Portfolio
+                    </div>
+                    <div style="font-size: 10px; font-family: 'JetBrains Mono', monospace, Consolas, sans-serif; color: #64748B; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 3px;">
+                      Security System &bull; Admin Portal
+                    </div>
                   </td>
                 </tr>
               </table>
@@ -111,86 +106,71 @@ async function sendLoginNotification(
 
           <!-- Message Body Content -->
           <tr>
-            <td style="padding: 32px 32px 28px 32px;">
+            <td style="padding: 24px 20px;">
               
-              <div style="margin-bottom: 24px;">
-                <h2 style="margin: 0 0 8px 0; font-size: 18px; font-weight: 700; color: #FFFFFF;">
+              <!-- Badge & Title -->
+              <div style="margin-bottom: 20px;">
+                <span style="display: inline-block; padding: 4px 10px; background-color: rgba(14, 207, 207, 0.1); border: 1px solid rgba(14, 207, 207, 0.3); border-radius: 20px; color: #0ECFCF; font-size: 10px; font-family: 'JetBrains Mono', monospace, Consolas, sans-serif; font-weight: 700; margin-bottom: 12px;">
+                  🔒 AUTHENTICATED SESSION
+                </span>
+                <h2 style="margin: 0 0 6px 0; font-size: 17px; font-weight: 700; color: #FFFFFF; line-height: 1.3;">
                   Admin Dashboard Login Alert
                 </h2>
-                <p style="margin: 0; font-size: 14px; color: #94A3B8; line-height: 1.6;">
-                  A successful login to your Portfolio Admin Panel was detected with your authorized credentials.
+                <p style="margin: 0; font-size: 13px; color: #94A3B8; line-height: 1.6;">
+                  A successful login was detected with your authorized credentials.
                 </p>
               </div>
 
-              <!-- Session Details Card -->
-              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #080C10; border: 1px solid #1E2D3D; border-radius: 12px; margin-bottom: 24px;">
-                <tr>
-                  <td style="padding: 16px 20px; border-bottom: 1px solid #1A2634;">
-                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
-                      <tr>
-                        <td style="font-size: 12px; font-family: 'JetBrains Mono', monospace, Consolas, sans-serif; color: #64748B; width: 120px;">
-                          ACCOUNT
-                        </td>
-                        <td style="font-size: 13px; font-family: 'JetBrains Mono', monospace, Consolas, sans-serif; color: #0ECFCF; font-weight: 700;">
-                          ${targetEmail}
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-                <tr>
-                  <td style="padding: 16px 20px; border-bottom: 1px solid #1A2634;">
-                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
-                      <tr>
-                        <td style="font-size: 12px; font-family: 'JetBrains Mono', monospace, Consolas, sans-serif; color: #64748B; width: 120px;">
-                          TIMESTAMP
-                        </td>
-                        <td style="font-size: 13px; font-family: 'JetBrains Mono', monospace, Consolas, sans-serif; color: #FFFFFF;">
-                          ${formattedDate} &bull; ${formattedTime}
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-                <tr>
-                  <td style="padding: 16px 20px; border-bottom: ${meta?.ip || meta?.userAgent ? '1px solid #1A2634' : 'none'};">
-                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
-                      <tr>
-                        <td style="font-size: 12px; font-family: 'JetBrains Mono', monospace, Consolas, sans-serif; color: #64748B; width: 120px;">
-                          LOCATION
-                        </td>
-                        <td style="font-size: 13px; font-family: 'JetBrains Mono', monospace, Consolas, sans-serif; color: #94A3B8;">
-                          Portfolio Admin Portal (${siteUrl})
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
+              <!-- Session Details Card (Stacked for 100% Mobile Cleanliness) -->
+              <div style="background-color: #080C10; border: 1px solid #1E2D3D; border-radius: 12px; margin-bottom: 20px; overflow: hidden;">
+                
+                <div style="padding: 12px 16px; border-bottom: 1px solid #1A2634;">
+                  <div style="font-size: 10px; font-family: 'JetBrains Mono', monospace, Consolas, sans-serif; color: #64748B; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 3px;">
+                    ACCOUNT
+                  </div>
+                  <div style="font-size: 13px; font-family: 'JetBrains Mono', monospace, Consolas, sans-serif; color: #0ECFCF; font-weight: 700; word-break: break-all;">
+                    ${targetEmail}
+                  </div>
+                </div>
+
+                <div style="padding: 12px 16px; border-bottom: 1px solid #1A2634;">
+                  <div style="font-size: 10px; font-family: 'JetBrains Mono', monospace, Consolas, sans-serif; color: #64748B; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 3px;">
+                    TIMESTAMP
+                  </div>
+                  <div style="font-size: 13px; font-family: 'JetBrains Mono', monospace, Consolas, sans-serif; color: #FFFFFF;">
+                    ${formattedDate} &bull; ${formattedTime}
+                  </div>
+                </div>
+
+                <div style="padding: 12px 16px; border-bottom: ${meta?.ip ? '1px solid #1A2634' : 'none'};">
+                  <div style="font-size: 10px; font-family: 'JetBrains Mono', monospace, Consolas, sans-serif; color: #64748B; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 3px;">
+                    PORTAL
+                  </div>
+                  <div style="font-size: 12px; font-family: 'JetBrains Mono', monospace, Consolas, sans-serif; color: #94A3B8; word-break: break-all;">
+                    ${siteUrl}/admin
+                  </div>
+                </div>
+
                 ${meta?.ip ? `
-                <tr>
-                  <td style="padding: 16px 20px; border-bottom: ${meta?.userAgent ? '1px solid #1A2634' : 'none'};">
-                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
-                      <tr>
-                        <td style="font-size: 12px; font-family: 'JetBrains Mono', monospace, Consolas, sans-serif; color: #64748B; width: 120px;">
-                          IP ADDRESS
-                        </td>
-                        <td style="font-size: 13px; font-family: 'JetBrains Mono', monospace, Consolas, sans-serif; color: #FFFFFF;">
-                          ${meta.ip}
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>` : ''}
-              </table>
+                <div style="padding: 12px 16px;">
+                  <div style="font-size: 10px; font-family: 'JetBrains Mono', monospace, Consolas, sans-serif; color: #64748B; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 3px;">
+                    IP ADDRESS
+                  </div>
+                  <div style="font-size: 13px; font-family: 'JetBrains Mono', monospace, Consolas, sans-serif; color: #FFFFFF;">
+                    ${meta.ip}
+                  </div>
+                </div>` : ''}
+
+              </div>
 
               <!-- Notice Box -->
-              <div style="padding: 16px 18px; background-color: #111A24; border: 1px solid #1E2D3D; border-left: 3px solid #0ECFCF; border-radius: 8px; font-size: 12px; color: #94A3B8; line-height: 1.6;">
-                If this was you, no action is needed. If you did not log in, please reset your password immediately from the dashboard settings.
+              <div style="padding: 14px 16px; background-color: #111A24; border: 1px solid #1E2D3D; border-left: 3px solid #0ECFCF; border-radius: 8px; font-size: 12px; color: #94A3B8; line-height: 1.5;">
+                If this was you, you can safely disregard this email. If you did not log in, please update your admin password immediately.
               </div>
 
               <!-- Button CTA -->
-              <div style="margin-top: 28px; text-align: center;">
-                <a href="${siteUrl}/admin" target="_blank" style="display: inline-block; padding: 12px 28px; background-color: #0ECFCF; color: #080C10; font-size: 13px; font-family: 'JetBrains Mono', monospace, Consolas, sans-serif; font-weight: 700; border-radius: 10px; text-decoration: none; box-shadow: 0 0 20px rgba(14, 207, 207, 0.3);">
+              <div style="margin-top: 24px; text-align: center;">
+                <a href="${siteUrl}/admin" target="_blank" style="display: block; width: fit-content; margin: 0 auto; padding: 12px 24px; background-color: #0ECFCF; color: #080C10; font-size: 13px; font-family: 'JetBrains Mono', monospace, Consolas, sans-serif; font-weight: 700; border-radius: 10px; text-decoration: none; box-shadow: 0 0 20px rgba(14, 207, 207, 0.3);">
                   Open Admin Dashboard &rarr;
                 </a>
               </div>
@@ -200,9 +180,9 @@ async function sendLoginNotification(
 
           <!-- Footer -->
           <tr>
-            <td style="padding: 20px 32px; background-color: #080C10; border-top: 1px solid #1E2D3D; text-align: center;">
-              <div style="font-size: 11px; color: #475569; font-family: 'JetBrains Mono', monospace, Consolas, sans-serif;">
-                &copy; ${new Date().getFullYear()} Youseef Sherif Portfolio &bull; Automated Security Notification
+            <td style="padding: 16px 20px; background-color: #080C10; border-top: 1px solid #1E2D3D; text-align: center;">
+              <div style="font-size: 10px; color: #475569; font-family: 'JetBrains Mono', monospace, Consolas, sans-serif;">
+                &copy; ${new Date().getFullYear()} Youseef Sherif &bull; Automated Security Notification
               </div>
             </td>
           </tr>

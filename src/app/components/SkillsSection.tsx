@@ -93,21 +93,30 @@ function SkillBar({ name, level }: { name: string; level: number }) {
   );
 }
 
-export default function SkillsSection() {
+export interface SkillsSectionProps {
+  initialSkills?: SkillRecord[];
+  initialCertifications?: CertificationRecord[];
+}
+
+export default function SkillsSection({ initialSkills, initialCertifications }: SkillsSectionProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [skills, setSkills] = useState<SkillRecord[]>(
-    defaultSkills.map((skill, index) => ({
-      id: String(index + 1),
-      ...skill,
-      order: skill.order ?? 0,
-    }))
+    initialSkills && initialSkills.length > 0
+      ? initialSkills
+      : defaultSkills.map((skill, index) => ({
+          id: String(index + 1),
+          ...skill,
+          order: skill.order ?? 0,
+        }))
   );
   const [certifications, setCertifications] = useState<CertificationRecord[]>(
-    defaultCertifications.map((cert, index) => ({
-      id: String(index + 1),
-      ...cert,
-      order: cert.order ?? 0,
-    }))
+    initialCertifications && initialCertifications.length > 0
+      ? initialCertifications
+      : defaultCertifications.map((cert, index) => ({
+          id: String(index + 1),
+          ...cert,
+          order: cert.order ?? 0,
+        }))
   );
   const [showCertModal, setShowCertModal] = useState(false);
   const [certFiles, setCertFiles] = useState<Array<{ name: string; url: string }>>([]);
@@ -117,80 +126,16 @@ export default function SkillsSection() {
   const skillCategories = useMemo(() => buildCategories(skills), [skills]);
 
   useEffect(() => {
-    const load = async () => {
-      try {
-        const [skillsResponse, certsResponse] = await Promise.all([
-          fetch('/api/skills', { cache: 'no-store' }),
-          fetch('/api/certifications', { cache: 'no-store' }),
-        ]);
+    if (initialSkills && initialSkills.length > 0) {
+      setSkills(initialSkills);
+    }
+  }, [initialSkills]);
 
-        if (skillsResponse.ok) {
-          const skillsData = await skillsResponse.json();
-          const incomingSkills = Array.isArray(skillsData.skills) ? skillsData.skills : [];
-          setSkills(
-            incomingSkills.length > 0
-              ? incomingSkills
-              : defaultSkills.map((skill, index) => ({
-                  id: String(index + 1),
-                  ...skill,
-                  order: skill.order ?? 0,
-                }))
-          );
-        } else {
-          setSkills(
-            defaultSkills.map((skill, index) => ({
-              id: String(index + 1),
-              ...skill,
-              order: skill.order ?? 0,
-            }))
-          );
-        }
-
-        if (certsResponse.ok) {
-          const certsData = await certsResponse.json();
-          const incomingCerts = Array.isArray(certsData.certifications)
-            ? certsData.certifications
-            : [];
-          setCertifications(
-            incomingCerts.length > 0
-              ? incomingCerts
-              : defaultCertifications.map((cert, index) => ({
-                  id: String(index + 1),
-                  ...cert,
-                  order: cert.order ?? 0,
-                }))
-          );
-        } else {
-          setCertifications(
-            defaultCertifications.map((cert, index) => ({
-              id: String(index + 1),
-              ...cert,
-              order: cert.order ?? 0,
-            }))
-          );
-        }
-      } catch (_err) {
-        setSkills(
-          defaultSkills.map((skill, index) => ({
-            id: String(index + 1),
-            ...skill,
-            order: skill.order ?? 0,
-          }))
-        );
-        setCertifications(
-          defaultCertifications.map((cert, index) => ({
-            id: String(index + 1),
-            ...cert,
-            order: cert.order ?? 0,
-          }))
-        );
-      } finally {
-        // no-op
-      }
-    };
-
-    load();
-  }, []);
+  useEffect(() => {
+    if (initialCertifications && initialCertifications.length > 0) {
+      setCertifications(initialCertifications);
+    }
+  }, [initialCertifications]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(

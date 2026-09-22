@@ -23,40 +23,27 @@ const fallbackProjects: Project[] = defaultProjects.map((project, index) => ({
   ...project,
 }));
 
-export default function ProjectsSection() {
-  const [projects, setProjects] = useState<Project[]>(fallbackProjects);
+export interface ProjectsSectionProps {
+  initialProjects?: Project[];
+}
+
+export default function ProjectsSection({ initialProjects }: ProjectsSectionProps) {
+  const [projects, setProjects] = useState<Project[]>(initialProjects || fallbackProjects);
   const [activeFilter, setActiveFilter] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
-  const [visibleProjects, setVisibleProjects] = useState<Project[]>(fallbackProjects);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [visibleProjects, setVisibleProjects] = useState<Project[]>(initialProjects || fallbackProjects);
   const sectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (initialProjects && initialProjects.length > 0) {
+      setProjects(initialProjects);
+    }
+  }, [initialProjects]);
 
   const allTags = useMemo(
     () => ['All', ...Array.from(new Set(projects.flatMap((project) => project.tags)))],
     [projects]
   );
-
-  useEffect(() => {
-    const loadProjects = async () => {
-      try {
-        const response = await fetch('/api/projects', { cache: 'no-store' });
-        if (!response.ok) {
-          throw new Error('Failed to load projects');
-        }
-        const data = await response.json();
-        const incoming = Array.isArray(data.projects) ? data.projects : [];
-        setProjects(incoming.length > 0 ? incoming : fallbackProjects);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load projects');
-        setProjects(fallbackProjects);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadProjects();
-  }, []);
 
   useEffect(() => {
     const filtered = projects.filter((p) => {
@@ -151,11 +138,7 @@ export default function ProjectsSection() {
           </div>
         </div>
 
-        {loading ? (
-          <div className="py-16 text-center text-sm text-muted-foreground">Loading projects...</div>
-        ) : error ? (
-          <div className="py-16 text-center text-sm text-red-400">{error}</div>
-        ) : visibleProjects.length > 0 ? (
+        {visibleProjects.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
             {visibleProjects.map((project, index) => (
               <div

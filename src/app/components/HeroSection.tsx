@@ -30,17 +30,8 @@ export default function HeroSection() {
   const heroRef = useRef<HTMLElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
   const [visibleLines, setVisibleLines] = useState(0);
-  const [cvUrl, setCvUrl] = useState('/api/cv');
+  const [cvUrl] = useState('/api/cv');
   const [showCvModal, setShowCvModal] = useState(false);
-
-  useEffect(() => {
-    fetch('/api/settings')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data?.cvUrl) setCvUrl('/api/cv');
-      })
-      .catch(() => {});
-  }, []);
 
   useEffect(() => {
     if (showCvModal) {
