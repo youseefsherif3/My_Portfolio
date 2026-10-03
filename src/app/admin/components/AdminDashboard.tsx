@@ -844,9 +844,13 @@ export default function AdminDashboard({ adminEmail }: { adminEmail: string }) {
         setExpFormMode('list');
         setEditingExp(null);
         fetchData();
+      } else {
+        const data = await res.json().catch(() => null);
+        showNotice(data?.error || 'Failed to save experience');
       }
     } catch (err) {
       console.error(err);
+      showNotice('An unexpected error occurred while saving experience');
     }
   };
 

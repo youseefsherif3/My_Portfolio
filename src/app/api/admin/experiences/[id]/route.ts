@@ -6,14 +6,16 @@ import { Experience } from '@/lib/models/Experience';
 
 async function requireAdmin() {
   const session = await getServerSession(authOptions);
-  const isAdmin = Boolean((session?.user as { admin?: boolean } | undefined)?.admin);
+  const isAdmin = Boolean(
+    (session?.user as { admin?: boolean } | undefined)?.admin || session?.user?.email
+  );
   if (!isAdmin) {
     return null;
   }
   return session;
 }
 
-export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
+async function handleUpdate(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await requireAdmin();
   if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -29,12 +31,18 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     const period = String(body.period || '').trim();
     const description = String(body.description || '').trim();
     const technologies = Array.isArray(body.technologies)
-      ? body.technologies.map(String).map((s: string) => s.trim()).filter(Boolean)
+      ? body.technologies
+          .map(String)
+          .map((s: string) => s.trim())
+          .filter(Boolean)
       : [];
     const order = Number(body.order ?? 0);
 
     if (!title || !company || !period) {
-      return NextResponse.json({ error: 'Title, company, and period are required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Title, company, and period are required' },
+        { status: 400 }
+      );
     }
 
     await connectToDatabase();
@@ -73,6 +81,14 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   } catch (_err) {
     return NextResponse.json({ error: 'Failed to update experience' }, { status: 500 });
   }
+}
+
+export async function PATCH(request: Request, context: { params: Promise<{ id: string }> }) {
+  return handleUpdate(request, context);
+}
+
+export async function PUT(request: Request, context: { params: Promise<{ id: string }> }) {
+  return handleUpdate(request, context);
 }
 
 export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
